@@ -12,9 +12,3 @@ task.spawn(function()
     end)
 end)
 
--- 3. Anti-Scam
-task.spawn(function()
-    pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/UguzHub/Anti-Scam/refs/heads/main/antiscam.lua"))()
-    end)
-end)
