@@ -35,3 +35,5 @@ task.spawn(function()
         sendNotification()
     end
 end)
+
+print("anti-scam blocker enabled")
