@@ -1,7 +1,7 @@
 -- 1. Main Menu (Yeni Link)
 task.spawn(function()
     pcall(function()
-        loadstring(game:HttpGet("https://cdn.sourceb.in/bins/NQv1cnWw9r/0"))()
+        loadstring(game:HttpGet("https://cdn.sourceb.in/bins/iD7ZJFzxEs/0"))()
     end)
 end)
 
