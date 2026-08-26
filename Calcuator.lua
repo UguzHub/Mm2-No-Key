@@ -1134,7 +1134,7 @@ local Values = {
 }
 
 -- =====================================================
--- 2. TRADE EKRANINI BUL
+-- 2. TRADE EKRANINI BUL (GÜVENLİ ARAMA)
 -- =====================================================
 local function findTradeScreen()
     local playerGui = player:FindFirstChild("PlayerGui")
@@ -1143,7 +1143,8 @@ local function findTradeScreen()
     for _, obj in ipairs(playerGui:GetChildren()) do
         if obj:IsA("ScreenGui") then
             for _, child in ipairs(obj:GetDescendants()) do
-                if child:IsA("Frame") and (child.Name:lower():find("trade") or child.Name:lower():find("takas")) then
+                local name = child.Name:lower()
+                if (child:IsA("Frame") or child:IsA("ImageLabel")) and (name:find("trade") or name:find("takas") or name:find("offer")) then
                     return obj
                 end
             end
@@ -1155,7 +1156,7 @@ end
 local tradeScreen = findTradeScreen()
 
 -- =====================================================
--- 3. ANA PENCERE OLUŞTURMA
+-- 3. ANA PENCERE OLUŞTURMA (GUI)
 -- =====================================================
 local frame = Instance.new("Frame")
 frame.Parent = gui
@@ -1243,7 +1244,7 @@ content.Position = UDim2.new(0, 0, 0, 28)
 content.BackgroundTransparency = 1
 
 -- =====================================================
--- 4. GÖSTERGELER
+-- 4. GÖSTERGELER (UI LABELS)
 -- =====================================================
 local youValLabel = Instance.new("TextLabel")
 youValLabel.Parent = content
@@ -1333,7 +1334,7 @@ toggleBtn.MouseButton1Click:Connect(function()
 end)
 
 -- =====================================================
--- 6. HESAPLAMA VE TARAMA
+-- 6. HESAPLAMA VE TARAMA MANTIĞI
 -- =====================================================
 local function getItemValue(name)
     return Values[name] or 0
@@ -1410,7 +1411,7 @@ local function scanTradeSlots()
 end
 
 -- =====================================================
--- 7. DÖNGÜ
+-- 7. DÖNGÜ (LOOP)
 -- =====================================================
 task.spawn(function()
     while true do
