@@ -1,1 +1,1289 @@
+-- =====================================================
+-- UGUZHUB V2 - TRADE VALUE CALCULATOR (EVRENSEL TARAMA)
+-- LocalScript - ScreenGui içine konur
+-- =====================================================
 
+local player = game.Players.LocalPlayer
+local gui = script.Parent
+
+-- =====================================================
+-- 1. VALUE DATABASE (BURAYI DOLDUR)
+-- =====================================================
+local Values = {
+	["Chroma Traveler's"] = 220000,
+	["Chroma Evergreen Set"] = 128000,
+	["Chroma Evergun"] = 75000,
+	["Chroma Evergreen"] = 48000,
+	["Chroma Alien Set"] = 37000,
+	["Chroma Ornament Set"] = 35800,
+	["Chroma Bauble"] = 34000,
+	["Chroma Constellation"] = 29000,
+	["Chroma Vampire's"] = 29000,
+	["Chroma Alienbeam"] = 24000,
+	["Chroma Sun Set"] = 21000,
+	["Gingerscope"] = 17750,
+	["Chroma Raygun"] = 14000,
+	["Traveler's Set"] = 13400,
+	["Chroma Sunrise"] = 13250,
+	["Chroma Snow Set"] = 12750,
+	["Chroma Blizzard Set"] = 12250,
+	["Full Small Set"] = 10395,
+	["Chroma Sunset"] = 9000,
+	["Traveler's Axe"] = 8100,
+	["Chroma Snowcannon"] = 7750,
+	["Evergreen Set"] = 5950,
+	["Traveler's"] = 5600,
+	["Chroma Blizzard"] = 5500,
+	["Celestial Set"] = 4700,
+	["Chroma Sweet Treat Set"] = 4700,
+	["Chroma Heart Wand"] = 4250,
+	["Chroma Snowstorm"] = 4250,
+	["Evergun"] = 3450,
+	["Chroma Beach Set"] = 3400,
+	["Chroma Watergun"] = 3400,
+	["Alien Set"] = 3275,
+	["Dark Set"] = 3225,
+	["Vampire's Set"] = 3050,
+	["Constellation"] = 2700,
+	["Evergreen"] = 2650,
+	["Alienbeam"] = 2600,
+	["Sakura Set"] = 2550,
+	["Chroma Snow Dagger"] = 2500,
+	["Celestial"] = 2450,
+	["Turkey"] = 2450,
+	["Chroma Treat"] = 2150,
+	["Raygun"] = 2100,
+	["Chroma Sweet"] = 2000,
+	["Vampire's"] = 1950,
+	["Chroma Ornament"] = 1800,
+	["Darkshot"] = 1800,
+	["Darksword"] = 1775,
+	["Sun Set"] = 1750,
+	["Vampire's Axe"] = 1500,
+	["Blossom"] = 1370,
+	["Sakura"] = 1360,
+	["Small Set"] = 1315,
+	["Chroma Sands"] = 1300,
+	["Chroma Beachy"] = 1250,
+	["Chroma Icecream"] = 1250,
+	["Sunrise"] = 1150,
+	["Snow Set"] = 1110,
+	["Soul Set"] = 1100,
+	["Ornament Set"] = 877,
+	["Snowcannon"] = 850,
+	["Rainbow Set"] = 830,
+	["Bauble"] = 825,
+	["Bloom Set"] = 810,
+	["Zombie Dog"] = 750,
+	["Sunset"] = 650,
+	["Elf"] = 625,
+	["Soul"] = 615,
+	["Spirit"] = 605,
+	["Chroma Set"] = 585,
+	["Full Chroma Set"] = 570,
+	["Ocean Set"] = 555,
+	["Chroma Weapon Set"] = 545,
+	["Xeno Set"] = 540,
+	["Cane"] = 525,
+	["Flowerwood Set"] = 525,
+	["Blizzard Set"] = 520,
+	["Corrupt Set"] = 512,
+	["Cane Set"] = 505,
+	["Rainbow"] = 420,
+	["Bow Set"] = 410,
+	["Flora"] = 410,
+	["Rainbow"] = 410,
+	["Pumpkin Set"] = 405,
+	["Bloom"] = 400,
+	["Chroma Set"] = 395,
+	["Corrupt"] = 375,
+	["Heart Wand"] = 340,
+	["Latte Set"] = 320,
+	["Sweet Treat Set"] = 315,
+	["Xenoknife"] = 310,
+	["Xenoshot"] = 310,
+	["Ancient Set"] = 305,
+	["Borealis Set"] = 295,
+	["Ocean"] = 285,
+	["Waves"] = 280,
+	["Beach Set"] = 270,
+	["Flowerwood"] = 265,
+	["Blizzard"] = 260,
+	["Flowerwood"] = 260,
+	["Full Ice Set"] = 260,
+	["Snowstorm"] = 260,
+	["Harvester"] = 250,
+	["Bats"] = 240,
+	["Snow Dagger"] = 240,
+	["Watergun"] = 240,
+	["Blue Pumpkin"] = 220,
+	["Bones"] = 215,
+	["Full Bringer Set"] = 191,
+	["Bats Set"] = 186,
+	["Full Luger Set"] = 185,
+	["Pearl Set"] = 185,
+	["Dungeon"] = 175,
+	["Icepiercer"] = 160,
+	["Bat Set"] = 155,
+	["Treat"] = 155,
+	["Dogey"] = 150,
+	["Sweet"] = 150,
+	["Borealis"] = 145,
+	["Australis"] = 140,
+	["Latte"] = 140,
+	["Latte"] = 140,
+	["Brains"] = 135,
+	["Luger Set"] = 135,
+	["Sparkle Set"] = 127,
+	["Chroma Bringer Set"] = 125,
+	["Zombified Set"] = 125,
+	["Bat"] = 120,
+	["Full Fire Pet Set"] = 120,
+	["Red Pumpkin"] = 120,
+	["Zombified"] = 120,
+	["Candy Set"] = 113,
+	["Beachy"] = 110,
+	["Sands"] = 110,
+	["Icecream"] = 105,
+	["Full Elderwood Set"] = 104,
+	["Icebreaker Set"] = 103,
+	["Ghoulish"] = 95,
+	["Gifts"] = 95,
+	["Vampire"] = 90,
+	["Gingerbread"] = 85,
+	["Pearlshine"] = 85,
+	["Pine"] = 85,
+	["Candy"] = 80,
+	["Pearl"] = 80,
+	["Gingerbread Set"] = 76,
+	["Chroma Slasher Set"] = 73,
+	["Collectible Set"] = 71,
+	["Elderwood Set"] = 71,
+	["Full Swirly Set"] = 71,
+	["Black Cat"] = 70,
+	["Darkknife"] = 70,
+	["Glitch1"] = 70,
+	["Spectre Set"] = 70,
+	["Spectral Set"] = 68,
+	["Full Virtual Set"] = 67,
+	["Bringer Set"] = 66,
+	["Chroma Darkbringer"] = 65,
+	["Heartblade"] = 65,
+	["Icebreaker"] = 65,
+	["Vampire Set"] = 63,
+	["Silent Night Set"] = 62,
+	["Chroma Lightbringer"] = 60,
+	["Green Pumpkin"] = 60,
+	["Sweater"] = 60,
+	["Vintage Set"] = 59,
+	["Swirly Set"] = 58,
+	["Mr. Reindeer"] = 55,
+	["Piggy"] = 55,
+	["Pumpkin"] = 55,
+	["Snowflake"] = 55,
+	["Hallow Set"] = 52,
+	["Branches"] = 50,
+	["Chroma Luger"] = 50,
+	["Ornament"] = 50,
+	["Silent Night"] = 50,
+	["Spectral"] = 50,
+	["Traveler"] = 50,
+	["Full Colored Seer Set"] = 46,
+	["Aurora"] = 45,
+	["Eternal Set"] = 43,
+	["Batwing"] = 42,
+	["Full Old Glory Set"] = 41,
+	["Chroma Candleflame"] = 40,
+	["Chroma Laser"] = 40,
+	["Chroma Swirly"] = 38,
+	["Elderwood Scythe"] = 38,
+	["Old Glory Set"] = 38,
+	["Slasher Set"] = 38,
+	["Swirly Axe"] = 38,
+	["Chroma Elderwood Blade"] = 37,
+	["Iceflake Set"] = 37,
+	["Red Luger"] = 37,
+	["Beach"] = 35,
+	["Chroma Deathshard"] = 35,
+	["Cotton Candy"] = 35,
+	["Glitch2"] = 35,
+	["Icicles Set"] = 35,
+	["Makeshift"] = 35,
+	["Mummified"] = 35,
+	["Phantom"] = 35,
+	["Plasma Set"] = 35,
+	["Santa"] = 35,
+	["Spectre"] = 35,
+	["Candleflame"] = 33,
+	["Darkbringer"] = 33,
+	["Elderwood Blade"] = 33,
+	["Elderwood Revolver"] = 33,
+	["Iceblaster"] = 33,
+	["Lightbringer"] = 33,
+	["Makeshift"] = 33,
+	["Chroma Cookiecane"] = 32,
+	["Chroma Fang"] = 32,
+	["Chroma Gemstone"] = 32,
+	["Chroma Shark"] = 32,
+	["Chroma Slasher"] = 32,
+	["Sugar"] = 32,
+	["Xmas Collectible Set"] = 32,
+	["Logchopper Set"] = 31,
+	["Shadow Set"] = 31,
+	["Frosted"] = 30,
+	["Ginger Set (Godly)"] = 30,
+	["Hallowscythe"] = 30,
+	["Luger"] = 30,
+	["Skate Set"] = 30,
+	["Snowflakes"] = 30,
+	["Sparkle9"] = 30,
+	["Virtual Set"] = 30,
+	["Wrapped"] = 30,
+	["Zombified"] = 30,
+	["Clockwork Set"] = 29,
+	["Chroma Heat"] = 28,
+	["Chroma Pet Set"] = 28,
+	["Chroma Seer"] = 28,
+	["JD"] = 28,
+	["Battleaxe Set"] = 27,
+	["Chroma Gingerblade"] = 27,
+	["Chroma Tides"] = 27,
+	["8-Bit Set"] = 26,
+	["Cookie Set"] = 26,
+	["Eternalcane Set"] = 26,
+	["CandyCorn"] = 25,
+	["Ecto"] = 25,
+	["Elf"] = 25,
+	["Snowman"] = 25,
+	["Webbed"] = 25,
+	["Chroma Saw"] = 23,
+	["Green Luger"] = 23,
+	["Amerilaser"] = 22,
+	["Chroma Boneblade"] = 22,
+	["Laser"] = 22,
+	["S1 Test"] = 22,
+	["Starry"] = 22,
+	["Elf"] = 20,
+	["Hallowgun"] = 20,
+	["Mr. Snowman"] = 20,
+	["Mummy"] = 20,
+	["Nightblade"] = 20,
+	["Red Pumpkin"] = 20,
+	["Shark"] = 20,
+	["Slimy"] = 20,
+	["Sparkle10"] = 20,
+	["Sparkle8"] = 20,
+	["Swirl"] = 20,
+	["Watcher"] = 20,
+	["Ice Shard Set"] = 19,
+	["Elf Set"] = 18,
+	["Full Valentine Set"] = 18,
+	["Icebeam"] = 18,
+	["Logchopper"] = 18,
+	["Plasmabeam"] = 18,
+	["Sparkle7"] = 18,
+	["Swirly"] = 18,
+	["BattleAxe II"] = 17,
+	["Blaster"] = 17,
+	["Ginger Luger"] = 17,
+	["Pixel"] = 17,
+	["Red Pumpkin"] = 17,
+	["RIP"] = 17,
+	["Colored Seer Set"] = 16,
+	["Hallow's Set"] = 16,
+	["Pals Set"] = 16,
+	["Coal"] = 15,
+	["Elf"] = 15,
+	["Gemstone"] = 15,
+	["Iceflake"] = 15,
+	["Old Glory"] = 15,
+	["Plasmablade"] = 15,
+	["Skulls"] = 15,
+	["Skully"] = 15,
+	["Slasher"] = 15,
+	["Vampire's Edge"] = 15,
+	["Zombified"] = 15,
+	["Wrapping Paper Set"] = 14,
+	["Cookiecane"] = 13,
+	["Deathshard"] = 13,
+	["Eternalcane"] = 13,
+	["Frostbite Set"] = 13,
+	["Ghost Set (Godly)"] = 13,
+	["Gingerblade"] = 13,
+	["Halloween Set"] = 13,
+	["Icewing"] = 13,
+	["Jinglegun"] = 13,
+	["Lugercane"] = 13,
+	["Magma"] = 13,
+	["Minty"] = 13,
+	["Nebula"] = 13,
+	["Virtual"] = 13,
+	["BattleAxe"] = 12,
+	["Candy Corn"] = 12,
+	["Gingermint"] = 12,
+	["Prism"] = 12,
+	["Silent Night"] = 12,
+	["Snowflakes"] = 12,
+	["Sparkle6"] = 12,
+	["Swirly Blade"] = 12,
+	["Void"] = 12,
+	["Wrap"] = 12,
+	["Wrap"] = 12,
+	["Aurora Set"] = 11,
+	["Pumpkin Set"] = 11,
+	["Arctic"] = 10,
+	["Chill"] = 10,
+	["Clockwork"] = 10,
+	["Combat II"] = 10,
+	["Eye Set"] = 10,
+	["Fang"] = 10,
+	["Floral"] = 10,
+	["Frostsaber"] = 10,
+	["Ghostfire"] = 10,
+	["Gingerbread"] = 10,
+	["Godly Pet Set"] = 10,
+	["Green Pumpkin"] = 10,
+	["Heat"] = 10,
+	["Phantom"] = 10,
+	["Sparkle4"] = 10,
+	["Spider"] = 10,
+	["Tides"] = 10,
+	["Wrapped Set"] = 10,
+	["Zombie"] = 10,
+	["Fire Pet Set"] = 9,
+	["Toxic Set"] = 9,
+	["Bioblade"] = 8,
+	["Blood"] = 8,
+	["Cavern Set"] = 8,
+	["Eternal III"] = 8,
+	["Eternal IV"] = 8,
+	["Ghost"] = 8,
+	["Hallow's Blade"] = 8,
+	["Hallow's Edge"] = 8,
+	["Handsaw"] = 8,
+	["Laser"] = 8,
+	["Skool"] = 8,
+	["Sparkle5"] = 8,
+	["Steel"] = 8,
+	["Zombie Set"] = 8,
+	["<3"] = 7,
+	["America"] = 7,
+	["Aurora"] = 7,
+	["Blue Pumpkin"] = 7,
+	["Boneblade"] = 7,
+	["Broken"] = 7,
+	["Cavern"] = 7,
+	["Eternal II"] = 7,
+	["Eternal"] = 7,
+	["Frostbite"] = 7,
+	["Ghastly"] = 7,
+	["Ghost Set (Legendary)"] = 7,
+	["Ghostblade"] = 7,
+	["Ginger Set (Legendary)"] = 7,
+	["Gothic"] = 7,
+	["Ice Dragon"] = 7,
+	["Ice Shard"] = 7,
+	["Prismatic"] = 7,
+	["Pumpking"] = 7,
+	["Saw"] = 7,
+	["Tailslide"] = 7,
+	["Vampire"] = 7,
+	["Xmas"] = 7,
+	["Zombie"] = 7,
+	["Full Elite Set"] = 6,
+	["Icecracker Set"] = 6,
+	["Prince"] = 6,
+	["Santa's Set (Legendary)"] = 6,
+	["Scratch Set"] = 6,
+	["Shadow"] = 6,
+	["Valentine Set"] = 6,
+	["Eggblade"] = 5,
+	["Flames"] = 5,
+	["Ghost"] = 5,
+	["Ginger"] = 5,
+	["Hazard"] = 5,
+	["Icedriller"] = 5,
+	["Jack Set"] = 5,
+	["Nightsky"] = 5,
+	["Nobledragon"] = 5,
+	["Phaser"] = 5,
+	["Pumpkin Green"] = 5,
+	["Pumpkin Patch"] = 5,
+	["Shadow Pumpkin"] = 5,
+	["Skeleton Key"] = 5,
+	["Snowflake"] = 5,
+	["Snowman"] = 5,
+	["Starry"] = 5,
+	["Toxic"] = 5,
+	["Winter's Edge"] = 5,
+	["Wraith"] = 5,
+	["Zombie"] = 5,
+	["Alex"] = 4,
+	["Bunnies"] = 4,
+	["Candy Swirl Set"] = 4,
+	["Corl"] = 4,
+	["Cowboy"] = 4,
+	["Denis"] = 4,
+	["Easter Set"] = 4,
+	["Euro"] = 4,
+	["Frozen Set"] = 4,
+	["Golden"] = 4,
+	["Marble Set"] = 4,
+	["Ollie"] = 4,
+	["Peppermint"] = 4,
+	["Potion Set"] = 4,
+	["Scratch"] = 4,
+	["Sidewinder"] = 4,
+	["Sketchy"] = 4,
+	["Skulls"] = 4,
+	["Snakebite Set"] = 4,
+	["Sub"] = 4,
+	["Vampire Set"] = 4,
+	["Apocalypse"] = 3,
+	["Aurora"] = 3,
+	["Bats"] = 3,
+	["Blue Elite"] = 3,
+	["Blue Seer"] = 3,
+	["Chilly"] = 3,
+	["Chroma Fire Bat"] = 3,
+	["Chroma Fire Bear"] = 3,
+	["Chroma Fire Bunny"] = 3,
+	["Chroma Fire Cat"] = 3,
+	["Chroma Fire Dog"] = 3,
+	["Chroma Fire Fox"] = 3,
+	["Chroma Fire Pig"] = 3,
+	["Cookieblade"] = 3,
+	["Eyeball"] = 3,
+	["Fairy"] = 3,
+	["Fire Set"] = 3,
+	["Frozen"] = 3,
+	["Ghosty"] = 3,
+	["Gingerbread"] = 3,
+	["Grave Set"] = 3,
+	["Green Elite"] = 3,
+	["Green Pumpkin"] = 3,
+	["Icicles"] = 3,
+	["Infected"] = 3,
+	["Jack"] = 3,
+	["Jetstream"] = 3,
+	["Lantern"] = 3,
+	["Lights Set"] = 3,
+	["Magma"] = 3,
+	["Mechbug"] = 3,
+	["Mummy Set"] = 3,
+	["Overseer Eye"] = 3,
+	["Pengy"] = 3,
+	["Potion"] = 3,
+	["Purple Pumpkin"] = 3,
+	["Purple Seer"] = 3,
+	["Red Pumpkin"] = 3,
+	["Red Seer"] = 3,
+	["Reindeer"] = 3,
+	["Rudolph"] = 3,
+	["Santa's Magic"] = 3,
+	["Santa's Spirit"] = 3,
+	["Seahorsey"] = 3,
+	["Seer"] = 3,
+	["Slime Set"] = 3,
+	["Snakebite"] = 3,
+	["Snowbear"] = 3,
+	["Sparkle1"] = 3,
+	["Sparkle2"] = 3,
+	["Sparkle3"] = 3,
+	["Spectral"] = 3,
+	["Splitter"] = 3,
+	["Tankie"] = 3,
+	["Traveler"] = 3,
+	["UFO"] = 3,
+	["Vampire Bat"] = 3,
+	["Vampire"] = 3,
+	["Webs"] = 3,
+	["Witched"] = 3,
+	["Zombie"] = 3,
+	["Asteroid"] = 2,
+	["Bats"] = 2,
+	["Blue Scratch"] = 2,
+	["Box of Blue Wrapping Paper"] = 2,
+	["Box of Fertilizer"] = 2,
+	["Box of Gold Wrapping Paper"] = 2,
+	["Box of Green Wrapping Paper"] = 2,
+	["Box of Purple Wrapping Paper"] = 2,
+	["Box of Red Wrapping Paper"] = 2,
+	["Box of Ultra Wrapping Paper"] = 2,
+	["Candy Swirl"] = 2,
+	["Cane Set"] = 2,
+	["Energized"] = 2,
+	["Frostfade"] = 2,
+	["Ghost"] = 2,
+	["Green Marble"] = 2,
+	["Grind"] = 2,
+	["Haunted Set"] = 2,
+	["Indy"] = 2,
+	["Lights"] = 2,
+	["Meltdown"] = 2,
+	["Mummy"] = 2,
+	["Nutcracker Set"] = 2,
+	["Orange Marble"] = 2,
+	["Orange Seer"] = 2,
+	["Ornament1 Set"] = 2,
+	["Ornament2 Set"] = 2,
+	["Potion"] = 2,
+	["Potion"] = 2,
+	["Pumpkin Pie"] = 2,
+	["Santa Set"] = 2,
+	["Snowman Set"] = 2,
+	["Stars"] = 2,
+	["Toxic"] = 2,
+	["Tree"] = 2,
+	["Tree Set"] = 2,
+	["Web Set"] = 2,
+	["Yellow Seer"] = 2,
+	["Aurora"] = 1,
+	["Badger"] = 1,
+	["Bats"] = 1,
+	["Blue Pumpkin"] = 1,
+	["Candy Swirl"] = 1,
+	["Cavern"] = 1,
+	["Chromatic"] = 1,
+	["Cookie"] = 1,
+	["Darkgun"] = 1,
+	["Frozen"] = 1,
+	["Ghosty"] = 1,
+	["Ginger Set (Rare)"] = 1,
+	["Gingerbread"] = 1,
+	["Gingerbread"] = 1,
+	["Grave"] = 1,
+	["Grave"] = 1,
+	["Haunted"] = 1,
+	["Haunted"] = 1,
+	["Holly"] = 1,
+	["Icecracker"] = 1,
+	["Lights"] = 1,
+	["Lil' Alien"] = 1,
+	["Monster"] = 1,
+	["Moonlight"] = 1,
+	["Moons"] = 1,
+	["Mummy"] = 1,
+	["Mystery Key"] = 1,
+	["Red Fire"] = 1,
+	["Slashed"] = 1,
+	["Slime"] = 1,
+	["Slime"] = 1,
+	["Snakebite"] = 1,
+	["Vampire"] = 1,
+	["Vampire"] = 1,
+	["Wolf"] = 1,
+	["Zombie"] = 1,
+	[""] = 0.4,
+	["Apocalypse"] = 0.4,
+	["Arctic"] = 0.4,
+	["Blossom"] = 0.4,
+	["Bones"] = 0.4,
+	["Brains"] = 0.4,
+	["Bunny"] = 0.4,
+	["Cane"] = 0.4,
+	["Cane"] = 0.4,
+	["Carrot"] = 0.4,
+	["Choco"] = 0.4,
+	["Chromatic"] = 0.4,
+	["Cursed"] = 0.4,
+	["Egg"] = 0.4,
+	["Elf"] = 0.4,
+	["Emerald"] = 0.4,
+	["Energized"] = 0.4,
+	["Frosted"] = 0.4,
+	["Frozen"] = 0.4,
+	["Gifted"] = 0.4,
+	["Ginger"] = 0.4,
+	["Ginger"] = 0.4,
+	["Gingerbread"] = 0.4,
+	["Goo"] = 0.4,
+	["Gothic"] = 0.4,
+	["Green Fire"] = 0.4,
+	["Hearts"] = 0.4,
+	["Infected"] = 0.4,
+	["Mummy"] = 0.4,
+	["Nightstar"] = 0.4,
+	["Nutcracker"] = 0.4,
+	["Ornament1"] = 0.4,
+	["Ornament1"] = 0.4,
+	["Ornament2"] = 0.4,
+	["Ornament2"] = 0.4,
+	["Overseer"] = 0.4,
+	["Passion"] = 0.4,
+	["Patrick"] = 0.4,
+	["Predator"] = 0.4,
+	["Reptile"] = 0.4,
+	["Ripper"] = 0.4,
+	["Roses"] = 0.4,
+	["Rupture"] = 0.4,
+	["Santa"] = 0.4,
+	["Santa"] = 0.4,
+	["Snowman"] = 0.4,
+	["Snowman"] = 0.4,
+	["Snowy"] = 0.4,
+	["Starry"] = 0.4,
+	["Sunset"] = 0.4,
+	["Sweetheart"] = 0.4,
+	["Tree"] = 0.4,
+	["Tree"] = 0.4,
+	["Tulip"] = 0.4,
+	["Valentine"] = 0.4,
+	["Web"] = 0.4,
+	["Webbed"] = 0.4,
+	["Witch"] = 0.4,
+	["Wrapped"] = 0.4,
+	["Wrapped"] = 0.4,
+	["Aquarium"] = 0.3,
+	["Bubbles"] = 0.3,
+	["Cane"] = 0.3,
+	["Carrot Bunny"] = 0.3,
+	["Cursed"] = 0.3,
+	["Deathspeaker"] = 0.3,
+	["Electro"] = 0.3,
+	["Frostbird"] = 0.3,
+	["Frostfade"] = 0.3,
+	["Frozen"] = 0.3,
+	["Gift Bag"] = 0.3,
+	["Hunter"] = 0.3,
+	["Ice Phoenix"] = 0.3,
+	["Icey"] = 0.3,
+	["Icicles"] = 0.3,
+	["Infected"] = 0.3,
+	["Magma"] = 0.3,
+	["Midnight"] = 0.3,
+	["Neon"] = 0.3,
+	["Nuke"] = 0.3,
+	["Palms"] = 0.3,
+	["Phoenix"] = 0.3,
+	["Sammy"] = 0.3,
+	["Skelly"] = 0.3,
+	["Snowy"] = 0.3,
+	["Sparkle"] = 0.3,
+	["Steambird"] = 0.3,
+	["TNL"] = 0.3,
+	["Traveller"] = 0.3,
+	["Watcher"] = 0.3,
+	["Aquarium"] = 0.2,
+	["Cupid"] = 0.2,
+	["Fire Bat"] = 0.2,
+	["Fire Bear"] = 0.2,
+	["Fire Bunny"] = 0.2,
+	["Fire Cat"] = 0.2,
+	["Fire Dog"] = 0.2,
+	["Fire Fox"] = 0.2,
+	["Fire Pig"] = 0.2,
+	["Ghastly"] = 0.2,
+	["Gifts"] = 0.2,
+	["Gifts"] = 0.2,
+	["Ginger"] = 0.2,
+	["Ice Camo"] = 0.2,
+	["Logcutter"] = 0.2,
+	["Molten"] = 0.2,
+	["Molten"] = 0.2,
+	["Palms"] = 0.2,
+	["Pumpkin"] = 0.2,
+	["Ribbons"] = 0.2,
+	["Ripper"] = 0.2,
+	["Snowflake Key"] = 0.2,
+	["Snowflakes"] = 0.2,
+	["Steel"] = 0.2,
+	["Butterflies"] = 0.1,
+	["Candleflame"] = 0.1,
+	["Damp"] = 0.1,
+	["Fade"] = 0.1,
+	["Frostflame"] = 0.1,
+	["Fusion"] = 0.1,
+	["Gingerbread"] = 0.1,
+	["Heart"] = 0.1,
+	["Neon"] = 0.1,
+	["Nether"] = 0.1,
+	["Overseer"] = 0.1,
+	["Painted"] = 0.1,
+	["Plasmite"] = 0.1,
+	["Pool Noodle"] = 0.1,
+	["Predator"] = 0.1,
+	["Rune"] = 0.1,
+	["Scarecrow"] = 0.1,
+	["Shiny"] = 0.1,
+	["Snowflake"] = 0.1,
+	["Spitfire"] = 0.1,
+	["Splash"] = 0.1,
+	["Storm"] = 0.1,
+	["Teddy"] = 0.1,
+	["Universe"] = 0.1,
+	["Viper"] = 0.1,
+	["Wraith"] = 0.1,
+	["Wraiths"] = 0.1,
+	["Bio"] = 0.075,
+	["Bones"] = 0.075,
+	["Curse"] = 0.075,
+	["Elite"] = 0.075,
+	["Frostflame"] = 0.075,
+	["Ghosts"] = 0.075,
+	["Gingercookie"] = 0.075,
+	["Hazard"] = 0.075,
+	["Hologram"] = 0.075,
+	["Mistletoe"] = 0.075,
+	["Pier"] = 0.075,
+	["Pine"] = 0.075,
+	["Pop Art"] = 0.075,
+	["RB"] = 0.075,
+	["Spearmint"] = 0.075,
+	["Splash"] = 0.075,
+	["Sunny"] = 0.075,
+	["Sunset"] = 0.075,
+	["Tree"] = 0.075,
+	["Tree"] = 0.075,
+	["Tropical"] = 0.075,
+	["Xeno"] = 0.075,
+	["Cane"] = 0.05,
+	["Floral"] = 0.05,
+	["Gingercookie"] = 0.05,
+	["Gingerheart"] = 0.05,
+	["Heartbreak"] = 0.05,
+	["Hologram"] = 0.05,
+	["Kraken"] = 0.05,
+	["Love"] = 0.05,
+	["Neon"] = 0.05,
+	["Pop Art"] = 0.05,
+	["Portal"] = 0.05,
+	["Ritual"] = 0.05,
+	["Robot"] = 0.05,
+	["Rose"] = 0.05,
+	["Sharky"] = 0.05,
+	["Sleigh"] = 0.05,
+	["Snowflake"] = 0.05,
+	["Snowglobe"] = 0.05,
+	["Spearmint"] = 0.05,
+	["Spring"] = 0.05,
+	["Tree"] = 0.05,
+	["Waves"] = 0.05,
+	["Xeno"] = 0.05,
+	["Yummy"] = 0.05,
+	["Abstract"] = 0.025,
+	["Ace"] = 0.025,
+	["Bacon"] = 0.025,
+	["Black"] = 0.025,
+	["Canes"] = 0.025,
+	["Cookie"] = 0.025,
+	["Etched"] = 0.025,
+	["Fireplace"] = 0.025,
+	["Forest"] = 0.025,
+	["Frosty"] = 0.025,
+	["Galactic"] = 0.025,
+	["Galaxy"] = 0.025,
+	["Hacker"] = 0.025,
+	["Holly"] = 0.025,
+	["Imbued"] = 0.025,
+	["iRevolver"] = 0.025,
+	["Korblox"] = 0.025,
+	["Krypto"] = 0.025,
+	["Marble"] = 0.025,
+	["Melon"] = 0.025,
+	["Mummy"] = 0.025,
+	["Musical"] = 0.025,
+	["Nightfire"] = 0.025,
+	["Nova"] = 0.025,
+	["Ornaments"] = 0.025,
+	["Purple"] = 0.025,
+	["Rainbow"] = 0.025,
+	["Rainbow"] = 0.025,
+	["Snowflake"] = 0.025,
+	["Snowman"] = 0.025,
+	["Space"] = 0.025,
+	["Spectrum"] = 0.025,
+	["Squire"] = 0.025,
+	["Vortex"] = 0.025,
+	["Wrapped"] = 0.025,
+	["Brains"] = 0.019,
+	["Canes"] = 0.019,
+	["Carrot"] = 0.019,
+	["Carrot"] = 0.019,
+	["Carrot"] = 0.019,
+	["Checker"] = 0.019,
+	["Clown"] = 0.019,
+	["Coal"] = 0.019,
+	["Decorated"] = 0.019,
+	["Deep Sea"] = 0.019,
+	["Eclipse"] = 0.019,
+	["Eyes"] = 0.019,
+	["Fall Camo"] = 0.019,
+	["Floatie"] = 0.019,
+	["Floral"] = 0.019,
+	["Future"] = 0.019,
+	["Gingerbread"] = 0.019,
+	["Gingerbread"] = 0.019,
+	["Glowy"] = 0.019,
+	["Lava"] = 0.019,
+	["Love"] = 0.019,
+	["Meadow"] = 0.019,
+	["Mistletoe"] = 0.019,
+	["Monster"] = 0.019,
+	["Moon"] = 0.019,
+	["Moons"] = 0.019,
+	["Mummy"] = 0.019,
+	["Neopolitan"] = 0.019,
+	["Night"] = 0.019,
+	["Painted"] = 0.019,
+	["Polar Bear"] = 0.019,
+	["Pool"] = 0.019,
+	["Popsicle"] = 0.019,
+	["Pumpkin"] = 0.019,
+	["Pumpkin"] = 0.019,
+	["Scarf"] = 0.019,
+	["Snowflake"] = 0.019,
+	["Snowman"] = 0.019,
+	["Soda"] = 0.019,
+	["Stars"] = 0.019,
+	["Stockings"] = 0.019,
+	["Stockings"] = 0.019,
+	["Sweater"] = 0.019,
+	["Sweater"] = 0.019,
+	["Sweater"] = 0.019,
+	["Treats"] = 0.019,
+	["Tree"] = 0.019,
+	["Turtles"] = 0.019,
+	["Witchbrew"] = 0.019,
+	["Wraiths"] = 0.019,
+	["Abduction"] = 0.013,
+	["Bat"] = 0.013,
+	["Blossom"] = 0.013,
+	["Bones"] = 0.013,
+	["Candied"] = 0.013,
+	["Cracks"] = 0.013,
+	["Darkness"] = 0.013,
+	["Donut"] = 0.013,
+	["Fragile"] = 0.013,
+	["Fragile"] = 0.013,
+	["Ghostly"] = 0.013,
+	["Ghosts"] = 0.013,
+	["Gift Bag"] = 0.013,
+	["Gingerbread"] = 0.013,
+	["Jellyfish"] = 0.013,
+	["Lava"] = 0.013,
+	["Leaves"] = 0.013,
+	["Ornaments"] = 0.013,
+	["Ornaments"] = 0.013,
+	["Paws"] = 0.013,
+	["Popsicle"] = 0.013,
+	["Portal"] = 0.013,
+	["Pumpkin"] = 0.013,
+	["Pumpkin Patch"] = 0.013,
+	["Retro"] = 0.013,
+	["Snowman"] = 0.013,
+	["Snowman"] = 0.013,
+	["Soda"] = 0.013,
+	["Starry"] = 0.013,
+	["Stockings"] = 0.013,
+	["Sweater"] = 0.013,
+	["Toy"] = 0.013,
+	["Treats"] = 0.013,
+	["Trees"] = 0.013,
+	["Turtle"] = 0.013,
+	["Webs"] = 0.013,
+	["Witch's Brew"] = 0.013,
+	["Wrapped"] = 0.013,
+	["Wreaths"] = 0.013,
+	["Adurite"] = 0.006,
+	["Adurite"] = 0.006,
+	["Aliens"] = 0.006,
+	["Biogun"] = 0.006,
+	["Blue"] = 0.006,
+	["Bluesteel"] = 0.006,
+	["Bluesteel"] = 0.006,
+	["Brush"] = 0.006,
+	["Camo"] = 0.006,
+	["Camo"] = 0.006,
+	["Cat"] = 0.006,
+	["Caution"] = 0.006,
+	["Cheddar"] = 0.006,
+	["Cheesy"] = 0.006,
+	["Circuit"] = 0.006,
+	["Coal"] = 0.006,
+	["Coal"] = 0.006,
+	["Doge"] = 0.006,
+	["Elitey"] = 0.006,
+	["Ghosts"] = 0.006,
+	["Hazmat"] = 0.006,
+	["Hive"] = 0.006,
+	["Jigsaw"] = 0.006,
+	["Lucky"] = 0.006,
+	["Marina"] = 0.006,
+	["Melon"] = 0.006,
+	["Missing"] = 0.006,
+	["Paper"] = 0.006,
+	["Penguin"] = 0.006,
+	["Pink"] = 0.006,
+	["Pirate"] = 0.006,
+	["Pumpkin"] = 0.006,
+	["Red"] = 0.006,
+	["Reindeer"] = 0.006,
+	["Ribbon"] = 0.006,
+	["Santa Dog"] = 0.006,
+	["Santa"] = 0.006,
+	["Sketch"] = 0.006,
+	["Soda"] = 0.006,
+	["Stalker"] = 0.006,
+	["Tiger"] = 0.006,
+	["Toy"] = 0.006,
+	["Vines"] = 0.006,
+	["Wanwood"] = 0.006,
+	["Wooden"] = 0.006,
+	["Bats"] = 0.005,
+	["Bear"] = 0.005,
+	["Candied"] = 0.005,
+	["Candle"] = 0.005,
+	["Candles"] = 0.005,
+	["Candy Corn"] = 0.005,
+	["Candy Corn"] = 0.005,
+	["Candy Corn"] = 0.005,
+	["CandyCorn"] = 0.005,
+	["Cane"] = 0.005,
+	["Carrots"] = 0.005,
+	["Carved"] = 0.005,
+	["Chick"] = 0.005,
+	["Clownfish"] = 0.005,
+	["Coal"] = 0.005,
+	["Coal"] = 0.005,
+	["Cracks"] = 0.005,
+	["Darkness"] 
+
+}
+-- =====================================================
+
+-- =====================================================
+-- 2. TRADE EKRANINI OTOMATİK BUL
+-- =====================================================
+local tradeScreen = nil
+
+local function findTradeScreen()
+    -- CoreGui'de ara
+    for _, obj in ipairs(game:GetService("CoreGui"):GetChildren()) do
+        if obj:IsA("ScreenGui") then
+            for _, child in ipairs(obj:GetDescendants()) do
+                if child:IsA("Frame") and (child.Name:lower():find("trade") or child.Name:lower():find("takas")) then
+                    return obj
+                end
+            end
+        end
+    end
+    -- PlayerGui'de ara
+    for _, obj in ipairs(player.PlayerGui:GetChildren()) do
+        if obj:IsA("ScreenGui") then
+            for _, child in ipairs(obj:GetDescendants()) do
+                if child:IsA("Frame") and (child.Name:lower():find("trade") or child.Name:lower():find("takas")) then
+                    return obj
+                end
+            end
+        end
+    end
+    return nil
+end
+
+tradeScreen = findTradeScreen()
+if not tradeScreen then
+    warn("⚠ Trade ekranı bulunamadı! Lütfen trade ekranını aç ve tekrar dene.")
+end
+
+-- =====================================================
+-- 3. UGUZHUB V2 ANA PENCERE
+-- =====================================================
+local frame = Instance.new("Frame")
+frame.Parent = gui
+frame.Size = UDim2.new(0, 440, 0, 200)
+frame.Position = UDim2.new(0.5, -220, 0.75, 0)
+frame.BackgroundColor3 = Color3.fromRGB(20, 22, 30)
+frame.BackgroundTransparency = 0.05
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+frame.Selectable = true
+frame.ZIndex = 999
+
+-- Başlık çubuğu
+local titleBar = Instance.new("Frame")
+titleBar.Parent = frame
+titleBar.Size = UDim2.new(1, 0, 0, 28)
+titleBar.BackgroundColor3 = Color3.fromRGB(30, 32, 42)
+titleBar.BorderSizePixel = 0
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Parent = titleBar
+titleLabel.Size = UDim2.new(0.7, 0, 1, 0)
+titleLabel.Position = UDim2.new(0.05, 0, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "UguzHub V2"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 16
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Butonlar
+local isMinimized = false
+local fullSize = frame.Size
+local minSize = UDim2.new(0, 440, 0, 28)
+
+local function createTitleBtn(text, x, color, callback)
+    local btn = Instance.new("TextButton")
+    btn.Parent = titleBar
+    btn.Size = UDim2.new(0, 26, 1, 0)
+    btn.Position = UDim2.new(x, 0, 0, 0)
+    btn.Text = text
+    btn.TextColor3 = Color3.fromRGB(255,255,255)
+    btn.BackgroundColor3 = color or Color3.fromRGB(50,52,62)
+    btn.BorderSizePixel = 0
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 14
+    btn.MouseButton1Click:Connect(callback)
+    return btn
+end
+
+createTitleBtn("−", 0.82, Color3.fromRGB(60,60,70), function()
+    if isMinimized then
+        frame.Size = fullSize
+        for _, child in ipairs(frame:GetChildren()) do
+            if child ~= titleBar then child.Visible = true end
+        end
+        isMinimized = false
+    else
+        fullSize = frame.Size
+        frame.Size = minSize
+        for _, child in ipairs(frame:GetChildren()) do
+            if child ~= titleBar then child.Visible = false end
+        end
+        isMinimized = true
+    end
+end)
+
+createTitleBtn("+", 0.88, Color3.fromRGB(60,60,70), function()
+    if not isMinimized then
+        local newSize = frame.Size + UDim2.new(0, 40, 0, 20)
+        if newSize.X.Offset < 350 then newSize = UDim2.new(0, 350, 0, 150) end
+        if newSize.Y.Offset < 150 then newSize = UDim2.new(0, 350, 0, 150) end
+        frame.Size = newSize
+        fullSize = newSize
+    end
+end)
+
+createTitleBtn("✕", 0.94, Color3.fromRGB(180,40,40), function()
+    frame.Visible = false
+end)
+
+-- İçerik
+local content = Instance.new("Frame")
+content.Parent = frame
+content.Size = UDim2.new(1, 0, 1, -28)
+content.Position = UDim2.new(0, 0, 0, 28)
+content.BackgroundTransparency = 1
+
+-- =====================================================
+-- 4. GÖSTERGELER
+-- =====================================================
+
+-- YOU VALUE (sol üst)
+local youValLabel = Instance.new("TextLabel")
+youValLabel.Parent = content
+youValLabel.Size = UDim2.new(0.3, 0, 0.3, 0)
+youValLabel.Position = UDim2.new(0.05, 0, 0.05, 0)
+youValLabel.BackgroundTransparency = 1
+youValLabel.Text = "0.00 VALUE"
+youValLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
+youValLabel.TextSize = 20
+youValLabel.Font = Enum.Font.GothamBold
+youValLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- THEM VALUE (sağ üst)
+local themValLabel = Instance.new("TextLabel")
+themValLabel.Parent = content
+themValLabel.Size = UDim2.new(0.3, 0, 0.3, 0)
+themValLabel.Position = UDim2.new(0.65, 0, 0.05, 0)
+themValLabel.BackgroundTransparency = 1
+themValLabel.Text = "0.00 VALUE"
+themValLabel.TextColor3 = Color3.fromRGB(255, 150, 150)
+themValLabel.TextSize = 20
+themValLabel.Font = Enum.Font.GothamBold
+themValLabel.TextXAlignment = Enum.TextXAlignment.Right
+
+-- FARK (orta üst)
+local diffLabel = Instance.new("TextLabel")
+diffLabel.Parent = content
+diffLabel.Size = UDim2.new(0.3, 0, 0.3, 0)
+diffLabel.Position = UDim2.new(0.35, 0, 0.05, 0)
+diffLabel.BackgroundTransparency = 1
+diffLabel.Text = "+0.00"
+diffLabel.TextColor3 = Color3.fromRGB(200,200,200)
+diffLabel.TextSize = 24
+diffLabel.Font = Enum.Font.GothamBold
+diffLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+-- % oran (orta alt)
+local percentLabel = Instance.new("TextLabel")
+percentLabel.Parent = content
+percentLabel.Size = UDim2.new(0.2, 0, 0.25, 0)
+percentLabel.Position = UDim2.new(0.40, 0, 0.45, 0)
+percentLabel.BackgroundTransparency = 1
+percentLabel.Text = "0%"
+percentLabel.TextColor3 = Color3.fromRGB(180,180,180)
+percentLabel.TextSize = 18
+percentLabel.Font = Enum.Font.GothamBold
+percentLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+-- YOU / THEM etiketleri (alt)
+local youTag = Instance.new("TextLabel")
+youTag.Parent = content
+youTag.Size = UDim2.new(0.1, 0, 0.15, 0)
+youTag.Position = UDim2.new(0.05, 0, 0.70, 0)
+youTag.BackgroundTransparency = 1
+youTag.Text = "YOU"
+youTag.TextColor3 = Color3.fromRGB(100, 255, 100)
+youTag.TextSize = 14
+youTag.Font = Enum.Font.GothamBold
+youTag.TextXAlignment = Enum.TextXAlignment.Left
+
+local themTag = Instance.new("TextLabel")
+themTag.Parent = content
+themTag.Size = UDim2.new(0.1, 0, 0.15, 0)
+themTag.Position = UDim2.new(0.85, 0, 0.70, 0)
+themTag.BackgroundTransparency = 1
+themTag.Text = "THEM"
+themTag.TextColor3 = Color3.fromRGB(255, 150, 150)
+themTag.TextSize = 14
+themTag.Font = Enum.Font.GothamBold
+themTag.TextXAlignment = Enum.TextXAlignment.Right
+
+-- =====================================================
+-- 5. ON/OFF BUTONU (sağ alt)
+-- =====================================================
+local isOn = true
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Parent = content
+toggleBtn.Size = UDim2.new(0, 60, 0, 30)
+toggleBtn.Position = UDim2.new(0.78, 0, 0.70, 0)
+toggleBtn.Text = "ON"
+toggleBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+toggleBtn.TextColor3 = Color3.fromRGB(255,255,255)
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextSize = 16
+toggleBtn.BorderSizePixel = 0
+toggleBtn.MouseButton1Click:Connect(function()
+    isOn = not isOn
+    toggleBtn.Text = isOn and "ON" or "OFF"
+    toggleBtn.BackgroundColor3 = isOn and Color3.fromRGB(0,200,0) or Color3.fromRGB(200,0,0)
+end)
+
+-- =====================================================
+-- 6. VALUE NOT FOUND TEMİZLEME
+-- =====================================================
+local function clearNotFoundLabels()
+    for _, child in ipairs(gui:GetDescendants()) do
+        if child:IsA("TextLabel") and child.Name == "NotFoundLabel" then
+            child:Destroy()
+        end
+    end
+end
+
+-- =====================================================
+-- 7. OTOMATİK OKUMA (EVRENSEL)
+-- =====================================================
+local function getItemValue(name)
+    return VALUES[name] or 0
+end
+
+local function scanTradeSlots()
+    if not isOn then return end
+    if not tradeScreen or not tradeScreen.Parent then
+        tradeScreen = findTradeScreen()
+        if not tradeScreen then 
+            -- Trade ekranı kapalıysa değerleri sıfırla
+            youValLabel.Text = "0.00 VALUE"
+            themValLabel.Text = "0.00 VALUE"
+            diffLabel.Text = "0.00"
+            diffLabel.TextColor3 = Color3.fromRGB(200,200,200)
+            percentLabel.Text = "0%"
+            percentLabel.TextColor3 = Color3.fromRGB(180,180,180)
+            return 
+        end
+    end
+    
+    clearNotFoundLabels()
+    
+    local yourTotal = 0
+    local theirTotal = 0
+    
+    -- Tüm trade ekranındaki TextLabel'leri tara
+    for _, child in ipairs(tradeScreen:GetDescendants()) do
+        if child:IsA("TextLabel") and child.Text ~= "" and child.Visible then
+            local itemName = child.Text
+            -- Parantez içindekileri temizle (örnek: "Harvester (Godly)" -> "Harvester")
+            local cleanName = itemName:match("^(.-)%s*%(") or itemName
+            cleanName = cleanName:gsub("%s+$", "") -- sondaki boşlukları temizle
+            
+            local val = getItemValue(cleanName)
+            
+            if val > 0 then
+                -- Konuma göre taraf belirle (X < 500 sol = YOU, X > 500 sağ = THEM)
+                local posX = child.AbsolutePosition.X
+                if posX < 500 then
+                    yourTotal = yourTotal + val
+                else
+                    theirTotal = theirTotal + val
+                end
+            else
+                -- Value Not Found etiketi oluştur
+                local notFound = Instance.new("TextLabel")
+                notFound.Name = "NotFoundLabel"
+                notFound.Parent = child.Parent
+                notFound.Size = UDim2.new(0, 90, 0, 16)
+                notFound.Position = UDim2.new(0, child.AbsolutePosition.X - 5, 0, child.AbsolutePosition.Y - 18)
+                notFound.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+                notFound.BackgroundTransparency = 0.3
+                notFound.Text = "⚠ Value Not Found"
+                notFound.TextColor3 = Color3.fromRGB(255, 200, 100)
+                notFound.TextSize = 10
+                notFound.Font = Enum.Font.GothamBold
+                notFound.ZIndex = 999
+                notFound.BorderSizePixel = 1
+                notFound.BorderColor3 = Color3.fromRGB(255, 0, 0)
+            end
+        end
+    end
+    
+    -- Güncelle
+    local diff = yourTotal - theirTotal
+    youValLabel.Text = string.format("%.2f VALUE", yourTotal)
+    themValLabel.Text = string.format("%.2f VALUE", theirTotal)
+    
+    if diff > 0 then
+        diffLabel.Text = "+" .. string.format("%.2f", diff)
+        diffLabel.TextColor3 = Color3.fromRGB(0,255,0)
+    elseif diff < 0 then
+        diffLabel.Text = string.format("%.2f", diff)
+        diffLabel.TextColor3 = Color3.fromRGB(255,0,0)
+    else
+        diffLabel.Text = "0.00"
+        diffLabel.TextColor3 = Color3.fromRGB(200,200,200)
+    end
+    
+    if yourTotal > 0 then
+        local percent = (diff / yourTotal) * 100
+        percentLabel.Text = string.format("%.0f%%", percent)
+        if percent > 0 then
+            percentLabel.TextColor3 = Color3.fromRGB(0,255,0)
+        elseif percent < 0 then
+            percentLabel.TextColor3 = Color3.fromRGB(255,0,0)
+        else
+            percentLabel.TextColor3 = Color3.fromRGB(200,200,200)
+        end
+    else
+        percentLabel.Text = "0%"
+        percentLabel.TextColor3 = Color3.fromRGB(180,180,180)
+    end
+end
+
+-- =====================================================
+-- 8. SÜREKLİ TARA (0.3 saniye aralıkla)
+-- =====================================================
+while task.wait(0.3) do
+    scanTradeSlots()
+end
