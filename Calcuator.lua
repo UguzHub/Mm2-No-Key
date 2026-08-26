@@ -1,11 +1,16 @@
 -- =====================================================
--- UGUZHUB V2 - TRADE VALUE CALCULATOR (EVRENSEL TARAMA)
--- LocalScript - ScreenGui içine konur
+-- UGUZHUB V2 - DELTA MOBIL UYUMLU VERSİYON
 -- =====================================================
 
-local player = game.Players.LocalPlayer
-local gui = script.Parent
-local camera = workspace.CurrentCamera
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+
+-- Eğer daha önce açıldıysa eski GUI'yi sil
+if CoreGui:FindFirstChild("UguzHubV2") then
+    CoreGui.UguzHubV2:Destroy()
+end
 
 -- =====================================================
 -- 1. VALUE DATABASE (BURAYI DOLDUR)
@@ -1133,44 +1138,25 @@ local Values = {
 	["Clown"] = 0.0015625,
 }
 
--- =====================================================
--- 2. TRADE EKRANINI BUL (GÜVENLİ ARAMA)
--- =====================================================
-local function findTradeScreen()
-    local playerGui = player:FindFirstChild("PlayerGui")
-    if not playerGui then return nil end
-    
-    for _, obj in ipairs(playerGui:GetChildren()) do
-        if obj:IsA("ScreenGui") then
-            for _, child in ipairs(obj:GetDescendants()) do
-                local name = child.Name:lower()
-                if (child:IsA("Frame") or child:IsA("ImageLabel")) and (name:find("trade") or name:find("takas") or name:find("offer")) then
-                    return obj
-                end
-            end
-        end
-    end
-    return nil
-end
-
-local tradeScreen = findTradeScreen()
 
 -- =====================================================
--- 3. ANA PENCERE OLUŞTURMA (GUI)
+-- 2. GUI OLUŞTURMA (CORE GUI)
 -- =====================================================
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "UguzHubV2"
+screenGui.Parent = CoreGui
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
 local frame = Instance.new("Frame")
-frame.Parent = gui
-frame.Size = UDim2.new(0, 440, 0, 200)
-frame.Position = UDim2.new(0.5, -220, 0.75, 0)
+frame.Parent = screenGui
+frame.Size = UDim2.new(0, 420, 0, 180)
+frame.Position = UDim2.new(0.5, -210, 0.70, 0)
 frame.BackgroundColor3 = Color3.fromRGB(20, 22, 30)
-frame.BackgroundTransparency = 0.05
 frame.BorderSizePixel = 0
 frame.Active = true
 frame.Draggable = true
-frame.Selectable = true
-frame.ZIndex = 999
 
--- Başlık Çubuğu
+-- Başlık
 local titleBar = Instance.new("Frame")
 titleBar.Parent = frame
 titleBar.Size = UDim2.new(1, 0, 0, 28)
@@ -1179,62 +1165,26 @@ titleBar.BorderSizePixel = 0
 
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Parent = titleBar
-titleLabel.Size = UDim2.new(0.7, 0, 1, 0)
-titleLabel.Position = UDim2.new(0.05, 0, 0, 0)
+titleLabel.Size = UDim2.new(0.6, 0, 1, 0)
+titleLabel.Position = UDim2.new(0.03, 0, 0, 0)
 titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "UguzHub V2"
+titleLabel.Text = "UguzHub V2 (Delta)"
 titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-titleLabel.TextSize = 16
+titleLabel.TextSize = 14
 titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 
-local isMinimized = false
-local fullSize = frame.Size
-local minSize = UDim2.new(0, 440, 0, 28)
-
-local function createTitleBtn(text, x, color, callback)
-    local btn = Instance.new("TextButton")
-    btn.Parent = titleBar
-    btn.Size = UDim2.new(0, 26, 1, 0)
-    btn.Position = UDim2.new(x, 0, 0, 0)
-    btn.Text = text
-    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.BackgroundColor3 = color or Color3.fromRGB(50, 52, 62)
-    btn.BorderSizePixel = 0
-    btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 14
-    btn.MouseButton1Click:Connect(callback)
-    return btn
-end
-
-createTitleBtn("−", 0.82, Color3.fromRGB(60, 60, 70), function()
-    isMinimized = not isMinimized
-    if isMinimized then
-        fullSize = frame.Size
-        frame.Size = minSize
-        for _, child in ipairs(frame:GetChildren()) do
-            if child ~= titleBar then child.Visible = false end
-        end
-    else
-        frame.Size = fullSize
-        for _, child in ipairs(frame:GetChildren()) do
-            if child ~= titleBar then child.Visible = true end
-        end
-    end
-end)
-
-createTitleBtn("+", 0.88, Color3.fromRGB(60, 60, 70), function()
-    if not isMinimized then
-        local newSize = frame.Size + UDim2.new(0, 40, 0, 20)
-        if newSize.X.Offset < 350 then newSize = UDim2.new(0, 350, 0, 150) end
-        if newSize.Y.Offset < 150 then newSize = UDim2.new(0, 350, 0, 150) end
-        frame.Size = newSize
-        fullSize = newSize
-    end
-end)
-
-createTitleBtn("✕", 0.94, Color3.fromRGB(180, 40, 40), function()
-    frame.Visible = false
+-- Kapatma Butonu
+local closeBtn = Instance.new("TextButton")
+closeBtn.Parent = titleBar
+closeBtn.Size = UDim2.new(0, 26, 1, 0)
+closeBtn.Position = UDim2.new(0.93, 0, 0, 0)
+closeBtn.Text = "✕"
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+closeBtn.BorderSizePixel = 0
+closeBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
 end)
 
 local content = Instance.new("Frame")
@@ -1243,39 +1193,37 @@ content.Size = UDim2.new(1, 0, 1, -28)
 content.Position = UDim2.new(0, 0, 0, 28)
 content.BackgroundTransparency = 1
 
--- =====================================================
--- 4. GÖSTERGELER (UI LABELS)
--- =====================================================
+-- Göstergeler
 local youValLabel = Instance.new("TextLabel")
 youValLabel.Parent = content
 youValLabel.Size = UDim2.new(0.3, 0, 0.3, 0)
-youValLabel.Position = UDim2.new(0.05, 0, 0.05, 0)
+youValLabel.Position = UDim2.new(0.05, 0, 0.1, 0)
 youValLabel.BackgroundTransparency = 1
 youValLabel.Text = "0.00 VALUE"
 youValLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
-youValLabel.TextSize = 20
+youValLabel.TextSize = 16
 youValLabel.Font = Enum.Font.GothamBold
 youValLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 local themValLabel = Instance.new("TextLabel")
 themValLabel.Parent = content
 themValLabel.Size = UDim2.new(0.3, 0, 0.3, 0)
-themValLabel.Position = UDim2.new(0.65, 0, 0.05, 0)
+themValLabel.Position = UDim2.new(0.65, 0, 0.1, 0)
 themValLabel.BackgroundTransparency = 1
 themValLabel.Text = "0.00 VALUE"
 themValLabel.TextColor3 = Color3.fromRGB(255, 150, 150)
-themValLabel.TextSize = 20
+themValLabel.TextSize = 16
 themValLabel.Font = Enum.Font.GothamBold
 themValLabel.TextXAlignment = Enum.TextXAlignment.Right
 
 local diffLabel = Instance.new("TextLabel")
 diffLabel.Parent = content
 diffLabel.Size = UDim2.new(0.3, 0, 0.3, 0)
-diffLabel.Position = UDim2.new(0.35, 0, 0.05, 0)
+diffLabel.Position = UDim2.new(0.35, 0, 0.1, 0)
 diffLabel.BackgroundTransparency = 1
 diffLabel.Text = "+0.00"
 diffLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-diffLabel.TextSize = 24
+diffLabel.TextSize = 18
 diffLabel.Font = Enum.Font.GothamBold
 diffLabel.TextXAlignment = Enum.TextXAlignment.Center
 
@@ -1286,45 +1234,21 @@ percentLabel.Position = UDim2.new(0.40, 0, 0.45, 0)
 percentLabel.BackgroundTransparency = 1
 percentLabel.Text = "0%"
 percentLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
-percentLabel.TextSize = 18
+percentLabel.TextSize = 16
 percentLabel.Font = Enum.Font.GothamBold
 percentLabel.TextXAlignment = Enum.TextXAlignment.Center
 
-local youTag = Instance.new("TextLabel")
-youTag.Parent = content
-youTag.Size = UDim2.new(0.1, 0, 0.15, 0)
-youTag.Position = UDim2.new(0.05, 0, 0.70, 0)
-youTag.BackgroundTransparency = 1
-youTag.Text = "YOU"
-youTag.TextColor3 = Color3.fromRGB(100, 255, 100)
-youTag.TextSize = 14
-youTag.Font = Enum.Font.GothamBold
-youTag.TextXAlignment = Enum.TextXAlignment.Left
-
-local themTag = Instance.new("TextLabel")
-themTag.Parent = content
-themTag.Size = UDim2.new(0.1, 0, 0.15, 0)
-themTag.Position = UDim2.new(0.85, 0, 0.70, 0)
-themTag.BackgroundTransparency = 1
-themTag.Text = "THEM"
-themTag.TextColor3 = Color3.fromRGB(255, 150, 150)
-themTag.TextSize = 14
-themTag.Font = Enum.Font.GothamBold
-themTag.TextXAlignment = Enum.TextXAlignment.Right
-
--- =====================================================
--- 5. ON/OFF DÜĞMESİ
--- =====================================================
+-- ON/OFF Düğmesi
 local isOn = true
 local toggleBtn = Instance.new("TextButton")
 toggleBtn.Parent = content
-toggleBtn.Size = UDim2.new(0, 60, 0, 30)
-toggleBtn.Position = UDim2.new(0.78, 0, 0.70, 0)
+toggleBtn.Size = UDim2.new(0, 70, 0, 30)
+toggleBtn.Position = UDim2.new(0.75, 0, 0.65, 0)
 toggleBtn.Text = "ON"
 toggleBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
 toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 toggleBtn.Font = Enum.Font.GothamBold
-toggleBtn.TextSize = 16
+toggleBtn.TextSize = 14
 toggleBtn.BorderSizePixel = 0
 
 toggleBtn.MouseButton1Click:Connect(function()
@@ -1334,88 +1258,80 @@ toggleBtn.MouseButton1Click:Connect(function()
 end)
 
 -- =====================================================
--- 6. HESAPLAMA VE TARAMA MANTIĞI
+-- 3. TRADE TESPİT ETME VE HESAPLAMA
 -- =====================================================
-local function getItemValue(name)
-    return Values[name] or 0
-end
-
-local function scanTradeSlots()
-    if not isOn then return end
-
-    if not tradeScreen or not tradeScreen.Parent then
-        tradeScreen = findTradeScreen()
-        if not tradeScreen then
-            youValLabel.Text = "0.00 VALUE"
-            themValLabel.Text = "0.00 VALUE"
-            diffLabel.Text = "0.00"
-            diffLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-            percentLabel.Text = "0%"
-            percentLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
-            return
-        end
-    end
-
-    local yourTotal = 0
-    local theirTotal = 0
-    local screenWidth = camera and camera.ViewportSize.X or 1920
-    local midScreenX = screenWidth / 2
-
-    for _, child in ipairs(tradeScreen:GetDescendants()) do
-        if child:IsA("TextLabel") and child.Text ~= "" and child.Visible then
-            local itemName = child.Text
-            local cleanName = itemName:match("^(.-)%s*%(") or itemName
-            cleanName = cleanName:gsub("^%s*(.-)%s*$", "%1")
-
-            local val = getItemValue(cleanName)
-            if val > 0 then
-                local posX = child.AbsolutePosition.X
-                if posX < midScreenX then
-                    yourTotal = yourTotal + val
-                else
-                    theirTotal = theirTotal + val
+local function findTradeScreen()
+    for _, gui in ipairs(player.PlayerGui:GetChildren()) do
+        if gui:IsA("ScreenGui") then
+            for _, child in ipairs(gui:GetDescendants()) do
+                local name = child.Name:lower()
+                if (child:IsA("Frame") or child:IsA("ImageLabel")) and (name:find("trade") or name:find("takas") or name:find("offer")) then
+                    return gui
                 end
             end
         end
     end
-
-    local diff = yourTotal - theirTotal
-    youValLabel.Text = string.format("%.2f VALUE", yourTotal)
-    themValLabel.Text = string.format("%.2f VALUE", theirTotal)
-
-    if diff > 0 then
-        diffLabel.Text = "+" .. string.format("%.2f", diff)
-        diffLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-    elseif diff < 0 then
-        diffLabel.Text = string.format("%.2f", diff)
-        diffLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
-    else
-        diffLabel.Text = "0.00"
-        diffLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    end
-
-    if yourTotal > 0 then
-        local percent = (diff / yourTotal) * 100
-        percentLabel.Text = string.format("%.0f%%", percent)
-        if percent > 0 then
-            percentLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-        elseif percent < 0 then
-            percentLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
-        else
-            percentLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-        end
-    else
-        percentLabel.Text = "0%"
-        percentLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
-    end
+    return nil
 end
 
--- =====================================================
--- 7. DÖNGÜ (LOOP)
--- =====================================================
+local camera = workspace.CurrentCamera
+
 task.spawn(function()
-    while true do
-        scanTradeSlots()
-        task.wait(0.3)
+    while screenGui.Parent do
+        if isOn then
+            local tradeScreen = findTradeScreen()
+            if tradeScreen then
+                local yourTotal = 0
+                local theirTotal = 0
+                local screenWidth = camera.ViewportSize.X
+                local midScreenX = screenWidth / 2
+
+                for _, child in ipairs(tradeScreen:GetDescendants()) do
+                    if child:IsA("TextLabel") and child.Text ~= "" and child.Visible then
+                        local itemName = child.Text
+                        local cleanName = itemName:match("^(.-)%s*%(") or itemName
+                        cleanName = cleanName:gsub("^%s*(.-)%s*$", "%1")
+
+                        local val = Values[cleanName] or 0
+                        if val > 0 then
+                            if child.AbsolutePosition.X < midScreenX then
+                                yourTotal = yourTotal + val
+                            else
+                                theirTotal = theirTotal + val
+                            end
+                        end
+                    end
+                end
+
+                local diff = yourTotal - theirTotal
+                youValLabel.Text = string.format("%.2f VAL", yourTotal)
+                themValLabel.Text = string.format("%.2f VAL", theirTotal)
+
+                if diff > 0 then
+                    diffLabel.Text = "+" .. string.format("%.2f", diff)
+                    diffLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+                elseif diff < 0 then
+                    diffLabel.Text = string.format("%.2f", diff)
+                    diffLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+                else
+                    diffLabel.Text = "0.00"
+                    diffLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+                end
+
+                if yourTotal > 0 then
+                    local percent = (diff / yourTotal) * 100
+                    percentLabel.Text = string.format("%.0f%%", percent)
+                else
+                    percentLabel.Text = "0%"
+                end
+            else
+                youValLabel.Text = "0.00 VAL"
+                themValLabel.Text = "0.00 VAL"
+                diffLabel.Text = "0.00"
+                percentLabel.Text = "0%"
+            end
+        end
+        task.wait(0.4)
     end
 end)
+    
