@@ -1132,13 +1132,11 @@ local Values = {
 	["Clown"] = 0.0015625,
 }
 
--- Ana Ekran Arayüzü
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "MM2ValueMenuAndTracker"
 screenGui.Parent = CoreGui
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Açma/Kapama Menü Paneli
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 220, 0, 110)
 mainFrame.Position = UDim2.new(0.05, 0, 0.2, 0)
@@ -1180,13 +1178,13 @@ local btnCorner = Instance.new("UICorner")
 btnCorner.CornerRadius = UDim.new(0, 6)
 btnCorner.Parent = toggleBtn
 
--- Canlı Toplam Takip Göstergesi (UI İçinde)
+-- Canlı Toplam Paneli (Üst üste binmemesi için alta kaydırıldı)
 local trackerLabel = Instance.new("TextLabel")
-trackerLabel.Size = UDim2.new(0, 220, 0, 40)
-trackerLabel.Position = UDim2.new(0.05, 0, 0.32, 0)
+trackerLabel.Size = UDim2.new(0, 220, 0, 35)
+trackerLabel.Position = UDim2.new(0.05, 0, 0.55, 0)
 trackerLabel.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 trackerLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
-trackerLabel.TextSize = 13
+trackerLabel.TextSize = 12
 trackerLabel.Font = Enum.Font.GothamBold
 trackerLabel.Text = "Live Total: 0"
 trackerLabel.Visible = false
@@ -1211,7 +1209,12 @@ toggleBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
--- Canlı Değer ve Takip Hesaplama Motoru
+-- Yuvarlama Fonksiyonu (Küsürat patlamasını önler)
+local function round(val, decimal)
+	local mult = 10^(decimal or 0)
+	return math.floor(val * mult + 0.5) / mult
+end
+
 task.spawn(function()
 	while screenGui.Parent do
 		task.wait(0.3)
@@ -1229,20 +1232,19 @@ task.spawn(function()
 								
 								local val = Values[cleanName]
 								if val then
-									-- Canlı toplam için değerleri topla
 									totalValue = totalValue + val
 									
-									-- Eşya üstü value etiketi
 									if not desc:FindFirstChild("ValueTag") then
 										local tag = Instance.new("TextLabel")
 										tag.Name = "ValueTag"
 										tag.Size = UDim2.new(1, 0, 0, 20)
 										tag.Position = UDim2.new(0, 0, -0.3, 0)
 										tag.BackgroundTransparency = 1
-										tag.Text = tostring(val) .. " Value"
+										tag.Text = tostring(round(val, 2)) .. " Value"
 										tag.TextColor3 = Color3.fromRGB(0, 255, 0)
 										tag.TextStrokeTransparency = 0
-										tag.TextSize = 13
+                                        tag.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+										tag.TextSize = 12
 										tag.Font = Enum.Font.GothamBold
 										tag.Parent = desc
 									end
@@ -1252,7 +1254,7 @@ task.spawn(function()
 					end
 				end
 			end
-			trackerLabel.Text = "Live Total Value: " .. tostring(totalValue)
+			trackerLabel.Text = "Live Total Value: " .. tostring(round(totalValue, 2))
 		end
 	end
 end)
