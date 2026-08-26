@@ -4,13 +4,7 @@
 
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
-local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
-
--- Eğer daha önce açıldıysa eski GUI'yi sil
-if CoreGui:FindFirstChild("UguzHubV2") then
-    CoreGui.UguzHubV2:Destroy()
-end
 
 -- =====================================================
 -- 1. VALUE DATABASE (BURAYI DOLDUR)
@@ -1138,200 +1132,127 @@ local Values = {
 	["Clown"] = 0.0015625,
 }
 
-
--- =====================================================
--- 2. GUI OLUŞTURMA (CORE GUI)
--- =====================================================
+-- Ana Ekran Arayüzü
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "UguzHubV2"
+screenGui.Name = "MM2ValueMenuAndTracker"
 screenGui.Parent = CoreGui
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-local frame = Instance.new("Frame")
-frame.Parent = screenGui
-frame.Size = UDim2.new(0, 420, 0, 180)
-frame.Position = UDim2.new(0.5, -210, 0.70, 0)
-frame.BackgroundColor3 = Color3.fromRGB(20, 22, 30)
-frame.BorderSizePixel = 0
-frame.Active = true
-frame.Draggable = true
+-- Açma/Kapama Menü Paneli
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 220, 0, 110)
+mainFrame.Position = UDim2.new(0.05, 0, 0.2, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
 
--- Başlık
-local titleBar = Instance.new("Frame")
-titleBar.Parent = frame
-titleBar.Size = UDim2.new(1, 0, 0, 28)
-titleBar.BackgroundColor3 = Color3.fromRGB(30, 32, 42)
-titleBar.BorderSizePixel = 0
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = mainFrame
 
-local titleLabel = Instance.new("TextLabel")
-titleLabel.Parent = titleBar
-titleLabel.Size = UDim2.new(0.6, 0, 1, 0)
-titleLabel.Position = UDim2.new(0.03, 0, 0, 0)
-titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "UguzHub V2 (Delta)"
-titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-titleLabel.TextSize = 14
-titleLabel.Font = Enum.Font.GothamBold
-titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 35)
+title.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+title.Text = " MM2 Live Tracker"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 14
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = mainFrame
 
--- Kapatma Butonu
-local closeBtn = Instance.new("TextButton")
-closeBtn.Parent = titleBar
-closeBtn.Size = UDim2.new(0, 26, 1, 0)
-closeBtn.Position = UDim2.new(0.93, 0, 0, 0)
-closeBtn.Text = "✕"
-closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
-closeBtn.BorderSizePixel = 0
-closeBtn.MouseButton1Click:Connect(function()
-    screenGui:Destroy()
-end)
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 8)
+titleCorner.Parent = title
 
-local content = Instance.new("Frame")
-content.Parent = frame
-content.Size = UDim2.new(1, 0, 1, -28)
-content.Position = UDim2.new(0, 0, 0, 28)
-content.BackgroundTransparency = 1
-
--- Göstergeler
-local youValLabel = Instance.new("TextLabel")
-youValLabel.Parent = content
-youValLabel.Size = UDim2.new(0.3, 0, 0.3, 0)
-youValLabel.Position = UDim2.new(0.05, 0, 0.1, 0)
-youValLabel.BackgroundTransparency = 1
-youValLabel.Text = "0.00 VALUE"
-youValLabel.TextColor3 = Color3.fromRGB(100, 255, 100)
-youValLabel.TextSize = 16
-youValLabel.Font = Enum.Font.GothamBold
-youValLabel.TextXAlignment = Enum.TextXAlignment.Left
-
-local themValLabel = Instance.new("TextLabel")
-themValLabel.Parent = content
-themValLabel.Size = UDim2.new(0.3, 0, 0.3, 0)
-themValLabel.Position = UDim2.new(0.65, 0, 0.1, 0)
-themValLabel.BackgroundTransparency = 1
-themValLabel.Text = "0.00 VALUE"
-themValLabel.TextColor3 = Color3.fromRGB(255, 150, 150)
-themValLabel.TextSize = 16
-themValLabel.Font = Enum.Font.GothamBold
-themValLabel.TextXAlignment = Enum.TextXAlignment.Right
-
-local diffLabel = Instance.new("TextLabel")
-diffLabel.Parent = content
-diffLabel.Size = UDim2.new(0.3, 0, 0.3, 0)
-diffLabel.Position = UDim2.new(0.35, 0, 0.1, 0)
-diffLabel.BackgroundTransparency = 1
-diffLabel.Text = "+0.00"
-diffLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-diffLabel.TextSize = 18
-diffLabel.Font = Enum.Font.GothamBold
-diffLabel.TextXAlignment = Enum.TextXAlignment.Center
-
-local percentLabel = Instance.new("TextLabel")
-percentLabel.Parent = content
-percentLabel.Size = UDim2.new(0.2, 0, 0.25, 0)
-percentLabel.Position = UDim2.new(0.40, 0, 0.45, 0)
-percentLabel.BackgroundTransparency = 1
-percentLabel.Text = "0%"
-percentLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
-percentLabel.TextSize = 16
-percentLabel.Font = Enum.Font.GothamBold
-percentLabel.TextXAlignment = Enum.TextXAlignment.Center
-
--- ON/OFF Düğmesi
-local isOn = true
 local toggleBtn = Instance.new("TextButton")
-toggleBtn.Parent = content
-toggleBtn.Size = UDim2.new(0, 70, 0, 30)
-toggleBtn.Position = UDim2.new(0.75, 0, 0.65, 0)
-toggleBtn.Text = "ON"
-toggleBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+toggleBtn.Size = UDim2.new(0.9, 0, 0, 45)
+toggleBtn.Position = UDim2.new(0.05, 0, 0.45, 0)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+toggleBtn.Text = "Status: KAPALI"
 toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleBtn.Font = Enum.Font.GothamBold
 toggleBtn.TextSize = 14
-toggleBtn.BorderSizePixel = 0
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.Parent = mainFrame
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 6)
+btnCorner.Parent = toggleBtn
+
+-- Canlı Toplam Takip Göstergesi (UI İçinde)
+local trackerLabel = Instance.new("TextLabel")
+trackerLabel.Size = UDim2.new(0, 220, 0, 40)
+trackerLabel.Position = UDim2.new(0.05, 0, 0.32, 0)
+trackerLabel.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+trackerLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+trackerLabel.TextSize = 13
+trackerLabel.Font = Enum.Font.GothamBold
+trackerLabel.Text = "Live Total: 0"
+trackerLabel.Visible = false
+trackerLabel.Parent = screenGui
+
+local trackerCorner = Instance.new("UICorner")
+trackerCorner.CornerRadius = UDim.new(0, 6)
+trackerCorner.Parent = trackerLabel
+
+local overlayEnabled = false
 
 toggleBtn.MouseButton1Click:Connect(function()
-    isOn = not isOn
-    toggleBtn.Text = isOn and "ON" or "OFF"
-    toggleBtn.BackgroundColor3 = isOn and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(200, 0, 0)
+	overlayEnabled = not overlayEnabled
+	if overlayEnabled then
+		toggleBtn.Text = "Status: AÇIK"
+		toggleBtn.BackgroundColor3 = Color3.fromRGB(40, 180, 40)
+		trackerLabel.Visible = true
+	else
+		toggleBtn.Text = "Status: KAPALI"
+		toggleBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
+		trackerLabel.Visible = false
+	end
 end)
 
--- =====================================================
--- 3. TRADE TESPİT ETME VE HESAPLAMA
--- =====================================================
-local function findTradeScreen()
-    for _, gui in ipairs(player.PlayerGui:GetChildren()) do
-        if gui:IsA("ScreenGui") then
-            for _, child in ipairs(gui:GetDescendants()) do
-                local name = child.Name:lower()
-                if (child:IsA("Frame") or child:IsA("ImageLabel")) and (name:find("trade") or name:find("takas") or name:find("offer")) then
-                    return gui
-                end
-            end
-        end
-    end
-    return nil
-end
-
-local camera = workspace.CurrentCamera
-
+-- Canlı Değer ve Takip Hesaplama Motoru
 task.spawn(function()
-    while screenGui.Parent do
-        if isOn then
-            local tradeScreen = findTradeScreen()
-            if tradeScreen then
-                local yourTotal = 0
-                local theirTotal = 0
-                local screenWidth = camera.ViewportSize.X
-                local midScreenX = screenWidth / 2
-
-                for _, child in ipairs(tradeScreen:GetDescendants()) do
-                    if child:IsA("TextLabel") and child.Text ~= "" and child.Visible then
-                        local itemName = child.Text
-                        local cleanName = itemName:match("^(.-)%s*%(") or itemName
-                        cleanName = cleanName:gsub("^%s*(.-)%s*$", "%1")
-
-                        local val = Values[cleanName] or 0
-                        if val > 0 then
-                            if child.AbsolutePosition.X < midScreenX then
-                                yourTotal = yourTotal + val
-                            else
-                                theirTotal = theirTotal + val
-                            end
-                        end
-                    end
-                end
-
-                local diff = yourTotal - theirTotal
-                youValLabel.Text = string.format("%.2f VAL", yourTotal)
-                themValLabel.Text = string.format("%.2f VAL", theirTotal)
-
-                if diff > 0 then
-                    diffLabel.Text = "+" .. string.format("%.2f", diff)
-                    diffLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-                elseif diff < 0 then
-                    diffLabel.Text = string.format("%.2f", diff)
-                    diffLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
-                else
-                    diffLabel.Text = "0.00"
-                    diffLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-                end
-
-                if yourTotal > 0 then
-                    local percent = (diff / yourTotal) * 100
-                    percentLabel.Text = string.format("%.0f%%", percent)
-                else
-                    percentLabel.Text = "0%"
-                end
-            else
-                youValLabel.Text = "0.00 VAL"
-                themValLabel.Text = "0.00 VAL"
-                diffLabel.Text = "0.00"
-                percentLabel.Text = "0%"
-            end
-        end
-        task.wait(0.4)
-    end
+	while screenGui.Parent do
+		task.wait(0.3)
+		if overlayEnabled then
+			local totalValue = 0
+			local playerGui = player:FindFirstChild("PlayerGui")
+			if playerGui then
+				for _, gui in ipairs(playerGui:GetChildren()) do
+					if gui:IsA("ScreenGui") and (gui.Name:lower():find("trade") or gui.Name:lower():find("takas")) then
+						for _, desc in ipairs(gui:GetDescendants()) do
+							if desc:IsA("TextLabel") and desc.Text ~= "" then
+								local itemName = desc.Text
+								local cleanName = itemName:match("^(.-)%s*%(") or itemName
+								cleanName = cleanName:gsub("^%s*(.-)%s*$", "%1")
+								
+								local val = Values[cleanName]
+								if val then
+									-- Canlı toplam için değerleri topla
+									totalValue = totalValue + val
+									
+									-- Eşya üstü value etiketi
+									if not desc:FindFirstChild("ValueTag") then
+										local tag = Instance.new("TextLabel")
+										tag.Name = "ValueTag"
+										tag.Size = UDim2.new(1, 0, 0, 20)
+										tag.Position = UDim2.new(0, 0, -0.3, 0)
+										tag.BackgroundTransparency = 1
+										tag.Text = tostring(val) .. " Value"
+										tag.TextColor3 = Color3.fromRGB(0, 255, 0)
+										tag.TextStrokeTransparency = 0
+										tag.TextSize = 13
+										tag.Font = Enum.Font.GothamBold
+										tag.Parent = desc
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+			trackerLabel.Text = "Live Total Value: " .. tostring(totalValue)
+		end
+	end
 end)
-    
