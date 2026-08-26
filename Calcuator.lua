@@ -1335,7 +1335,7 @@ end)
 -- 6. HESAPLAMA VE TARAMA
 -- =====================================================
 local function getItemValue(name)
-    return VALUES[name] or 0
+    return Values[name] or 0
 end
 
 local function scanTradeSlots()
