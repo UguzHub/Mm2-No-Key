@@ -5,6 +5,7 @@
 
 local player = game.Players.LocalPlayer
 local gui = script.Parent
+local camera = workspace.CurrentCamera
 
 -- =====================================================
 -- 1. VALUE DATABASE (BURAYI DOLDUR)
@@ -1417,4 +1418,3 @@ task.spawn(function()
         task.wait(0.3)
     end
 end)
-
