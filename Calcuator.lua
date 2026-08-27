@@ -1133,14 +1133,15 @@ local Values = {
 }
 
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "MM2ValueMenuAndTracker"
+screenGui.Name = "MM2ZeroStartTracker"
 screenGui.Parent = CoreGui
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
+-- Sol üst şık açma/kapatma menü butonu
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 220, 0, 110)
-mainFrame.Position = UDim2.new(0.05, 0, 0.2, 0)
-mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+mainFrame.Size = UDim2.new(0, 160, 0, 50)
+mainFrame.Position = UDim2.new(0.02, 0, 0.15, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
 mainFrame.Draggable = true
@@ -1150,66 +1151,28 @@ local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 8)
 corner.Parent = mainFrame
 
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 35)
-title.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-title.Text = " MM2 Live Tracker"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.TextSize = 14
-title.Font = Enum.Font.GothamBold
-title.TextXAlignment = Enum.TextXAlignment.Left
-title.Parent = mainFrame
-
-local titleCorner = Instance.new("UICorner")
-titleCorner.CornerRadius = UDim.new(0, 8)
-titleCorner.Parent = title
-
 local toggleBtn = Instance.new("TextButton")
-toggleBtn.Size = UDim2.new(0.9, 0, 0, 45)
-toggleBtn.Position = UDim2.new(0.05, 0, 0.45, 0)
-toggleBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
-toggleBtn.Text = "Status: KAPALI"
-toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleBtn.TextSize = 14
+toggleBtn.Size = UDim2.new(1, 0, 1, 0)
+toggleBtn.BackgroundTransparency = 1
+toggleBtn.Text = "Value Menu: AÇIK"
+toggleBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
+toggleBtn.TextSize = 13
 toggleBtn.Font = Enum.Font.GothamBold
 toggleBtn.Parent = mainFrame
 
-local btnCorner = Instance.new("UICorner")
-btnCorner.CornerRadius = UDim.new(0, 6)
-btnCorner.Parent = toggleBtn
-
--- Canlı Toplam Paneli (Üst üste binmemesi için alta kaydırıldı)
-local trackerLabel = Instance.new("TextLabel")
-trackerLabel.Size = UDim2.new(0, 220, 0, 35)
-trackerLabel.Position = UDim2.new(0.05, 0, 0.55, 0)
-trackerLabel.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-trackerLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
-trackerLabel.TextSize = 12
-trackerLabel.Font = Enum.Font.GothamBold
-trackerLabel.Text = "Live Total: 0"
-trackerLabel.Visible = false
-trackerLabel.Parent = screenGui
-
-local trackerCorner = Instance.new("UICorner")
-trackerCorner.CornerRadius = UDim.new(0, 6)
-trackerCorner.Parent = trackerLabel
-
-local overlayEnabled = false
+local scriptEnabled = true
 
 toggleBtn.MouseButton1Click:Connect(function()
-	overlayEnabled = not overlayEnabled
-	if overlayEnabled then
-		toggleBtn.Text = "Status: AÇIK"
-		toggleBtn.BackgroundColor3 = Color3.fromRGB(40, 180, 40)
-		trackerLabel.Visible = true
+	scriptEnabled = not scriptEnabled
+	if scriptEnabled then
+		toggleBtn.Text = "Value Menu: AÇIK"
+		toggleBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
 	else
-		toggleBtn.Text = "Status: KAPALI"
-		toggleBtn.BackgroundColor3 = Color3.fromRGB(180, 40, 40)
-		trackerLabel.Visible = false
+		toggleBtn.Text = "Value Menu: KAPALI"
+		toggleBtn.TextColor3 = Color3.fromRGB(255, 60, 60)
 	end
 end)
 
--- Yuvarlama Fonksiyonu (Küsürat patlamasını önler)
 local function round(val, decimal)
 	local mult = 10^(decimal or 0)
 	return math.floor(val * mult + 0.5) / mult
@@ -1218,35 +1181,49 @@ end
 task.spawn(function()
 	while screenGui.Parent do
 		task.wait(0.3)
-		if overlayEnabled then
-			local totalValue = 0
+		if scriptEnabled then
 			local playerGui = player:FindFirstChild("PlayerGui")
 			if playerGui then
 				for _, gui in ipairs(playerGui:GetChildren()) do
 					if gui:IsA("ScreenGui") and (gui.Name:lower():find("trade") or gui.Name:lower():find("takas")) then
 						for _, desc in ipairs(gui:GetDescendants()) do
 							if desc:IsA("TextLabel") and desc.Text ~= "" then
-								local itemName = desc.Text
-								local cleanName = itemName:match("^(.-)%s*%(") or itemName
-								cleanName = cleanName:gsub("^%s*(.-)%s*$", "%1")
-								
-								local val = Values[cleanName]
-								if val then
-									totalValue = totalValue + val
+								local rawText = desc.Text
+								-- Oyunun kendi saçma 0.4 veya varsayılan etiketlerini işleme alma
+								if not rawText:find("Val") then
+									local count = 1
+									local cleanName = rawText:match("^(.-)%s*x(%d+)$")
+									if cleanName then
+										count = tonumber(rawText:match("x(%d+)$")) or 1
+										cleanName = cleanName:gsub("^%s*(.-)%s*$", "%1")
+									else
+										cleanName = rawText:match("^(.-)%s*%(") or rawText
+										cleanName = cleanName:gsub("^%s*(.-)%s*$", "%1")
+									end
 									
-									if not desc:FindFirstChild("ValueTag") then
-										local tag = Instance.new("TextLabel")
-										tag.Name = "ValueTag"
-										tag.Size = UDim2.new(1, 0, 0, 20)
-										tag.Position = UDim2.new(0, 0, -0.3, 0)
-										tag.BackgroundTransparency = 1
-										tag.Text = tostring(round(val, 2)) .. " Value"
-										tag.TextColor3 = Color3.fromRGB(0, 255, 0)
-										tag.TextStrokeTransparency = 0
-                                        tag.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-										tag.TextSize = 12
-										tag.Font = Enum.Font.GothamBold
-										tag.Parent = desc
+									local baseVal = Values[cleanName]
+									if baseVal then
+										local totalItemVal = baseVal * count
+										
+										-- Eğer daha önce etiket eklenmemişse sıfırdan oluştur
+										if not desc:FindFirstChild("CleanTag") then
+											local tag = Instance.new("TextLabel")
+											tag.Name = "CleanTag"
+											tag.Size = UDim2.new(1, 0, 0, 20)
+											tag.Position = UDim2.new(0, 0, -0.35, 0)
+											tag.BackgroundTransparency = 1
+											tag.Text = tostring(round(totalItemVal, 2)) .. " Val"
+											tag.TextColor3 = Color3.fromRGB(0, 255, 100)
+											tag.TextStrokeTransparency = 0
+											tag.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+											tag.TextSize = 12
+											tag.Font = Enum.Font.GothamBold
+                                            tag.ZIndex = desc.ZIndex + 5
+											tag.Parent = desc
+										else
+											-- Eşya sayısı veya türü değiştiğinde anlık güncelle
+											desc.CleanTag.Text = tostring(round(totalItemVal, 2)) .. " Val"
+										end
 									end
 								end
 							end
@@ -1254,7 +1231,6 @@ task.spawn(function()
 					end
 				end
 			end
-			trackerLabel.Text = "Live Total Value: " .. tostring(round(totalValue, 2))
 		end
 	end
 end)
