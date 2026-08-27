@@ -5,6 +5,7 @@
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
+local ContentProvider = game:GetService("ContentProvider")
 local player = Players.LocalPlayer
 
 -- =====================================================
@@ -1233,11 +1234,36 @@ local function createDeviceBox(xPos, iconId, caption)
 	label.ZIndex = 12
 	label.Parent = box
 
+	-- Görsel yüklenemezse (geçersiz/yanlış asset id ise) baş harfi gösteren yedek
+	task.spawn(function()
+		local ok = pcall(function()
+			ContentProvider:PreloadAsync({icon}, function(_, status)
+				if status ~= Enum.AssetFetchStatus.Success then
+					icon.Visible = false
+					local fallback = Instance.new("TextLabel")
+					fallback.Name = "IconFallback"
+					fallback.Size = icon.Size
+					fallback.Position = icon.Position
+					fallback.BackgroundTransparency = 1
+					fallback.Text = caption:sub(1, 1):upper()
+					fallback.TextColor3 = Color3.fromRGB(90, 90, 100)
+					fallback.Font = Enum.Font.GothamBlack
+					fallback.TextSize = 48
+					fallback.ZIndex = icon.ZIndex
+					fallback.Parent = box
+				end
+			end)
+		end)
+		if not ok then
+			icon.Visible = false
+		end
+	end)
+
 	return box
 end
 
-local mobileBox = createDeviceBox(0.33, "2802466063", "Mobile")
-local pcBox = createDeviceBox(0.67, "110032134344221", "Pc & Tablet")
+local mobileBox = createDeviceBox(0.33, "14040313905", "Mobile")
+local pcBox = createDeviceBox(0.67, "12684119292", "Pc & Tablet")
 
 -- Hover efekti (sadece mobil için, seçilebilir olduğu belli olsun)
 mobileBox.MouseEnter:Connect(function()
@@ -1305,13 +1331,13 @@ local function fadeOutAndDestroy(frame, duration)
 end
 
 -- =====================================================
--- 4. BİLDİRİM ÇUBUĞU (Sağ alt, 25 saniyelik ilerleme çubuklu)
+-- 4. BİLDİRİM ÇUBUĞU (Sağ alt, 15 saniyelik ilerleme çubuklu)
 -- =====================================================
 local function showActiveNotification()
 	local notif = Instance.new("Frame")
 	notif.Name = "NotifyBar"
 	notif.AnchorPoint = Vector2.new(1, 1)
-	notif.Size = UDim2.new(0, 280, 0, 58)
+	notif.Size = UDim2.new(0, 280, 0, 78)
 	notif.Position = UDim2.new(1, 320, 1, -20) -- ekranın dışında başlar
 	notif.BackgroundColor3 = Color3.fromRGB(16, 16, 20)
 	notif.BorderSizePixel = 0
@@ -1329,7 +1355,7 @@ local function showActiveNotification()
 
 	local dot = Instance.new("Frame")
 	dot.Size = UDim2.new(0, 10, 0, 10)
-	dot.Position = UDim2.new(0, 14, 0, 14)
+	dot.Position = UDim2.new(0, 14, 0, 12)
 	dot.BackgroundColor3 = Color3.fromRGB(0, 255, 110)
 	dot.BorderSizePixel = 0
 	dot.ZIndex = 21
@@ -1339,22 +1365,45 @@ local function showActiveNotification()
 	dotCorner.CornerRadius = UDim.new(1, 0)
 	dotCorner.Parent = dot
 
-	local notifText = Instance.new("TextLabel")
-	notifText.Size = UDim2.new(1, -40, 0, 20)
-	notifText.Position = UDim2.new(0, 34, 0, 8)
-	notifText.BackgroundTransparency = 1
-	notifText.Text = "Value Calculator Currently Active!"
-	notifText.TextColor3 = Color3.fromRGB(235, 235, 235)
-	notifText.Font = Enum.Font.GothamBold
-	notifText.TextSize = 12
-	notifText.TextXAlignment = Enum.TextXAlignment.Left
-	notifText.ZIndex = 21
-	notifText.Parent = notif
+	-- Üst satır: Value Calculator Online!
+	local topText = Instance.new("TextLabel")
+	topText.Size = UDim2.new(1, -40, 0, 18)
+	topText.Position = UDim2.new(0, 34, 0, 6)
+	topText.BackgroundTransparency = 1
+	topText.Text = "Value Calculator Online!"
+	topText.TextColor3 = Color3.fromRGB(235, 235, 235)
+	topText.Font = Enum.Font.GothamBold
+	topText.TextSize = 13
+	topText.TextXAlignment = Enum.TextXAlignment.Left
+	topText.ZIndex = 21
+	topText.Parent = notif
 
-	-- İlerleme çubuğu (25 saniyede boşalır)
+	-- Ortadaki ayırıcı çizgi
+	local divider = Instance.new("Frame")
+	divider.Size = UDim2.new(1, -28, 0, 1)
+	divider.Position = UDim2.new(0, 14, 0, 30)
+	divider.BackgroundColor3 = Color3.fromRGB(50, 50, 58)
+	divider.BorderSizePixel = 0
+	divider.ZIndex = 21
+	divider.Parent = notif
+
+	-- Alt satır: Value Hesaplayıcı Şuanda Aktif!
+	local bottomText = Instance.new("TextLabel")
+	bottomText.Size = UDim2.new(1, -40, 0, 18)
+	bottomText.Position = UDim2.new(0, 34, 0, 36)
+	bottomText.BackgroundTransparency = 1
+	bottomText.Text = "Value Hesaplayıcı Şuanda Aktif!"
+	bottomText.TextColor3 = Color3.fromRGB(190, 190, 195)
+	bottomText.Font = Enum.Font.Gotham
+	bottomText.TextSize = 12
+	bottomText.TextXAlignment = Enum.TextXAlignment.Left
+	bottomText.ZIndex = 21
+	bottomText.Parent = notif
+
+	-- İlerleme çubuğu (15 saniyede boşalır)
 	local track = Instance.new("Frame")
 	track.Size = UDim2.new(1, -28, 0, 4)
-	track.Position = UDim2.new(0, 14, 1, -16)
+	track.Position = UDim2.new(0, 14, 1, -12)
 	track.BackgroundColor3 = Color3.fromRGB(40, 40, 46)
 	track.BorderSizePixel = 0
 	track.ZIndex = 21
@@ -1393,11 +1442,12 @@ local function showActiveNotification()
 
 	task.wait(0.5)
 
-	-- 25 saniyelik ilerleme çubuğu (dolu -> boş)
-	local fillTween = TweenService:Create(fill, TweenInfo.new(25, Enum.EasingStyle.Linear), {Size = UDim2.new(0, 0, 1, 0)})
+	-- 15 saniyelik ilerleme çubuğu (dolu -> boş)
+	local fillTween = TweenService:Create(fill, TweenInfo.new(15, Enum.EasingStyle.Linear), {Size = UDim2.new(0, 0, 1, 0)})
 	fillTween:Play()
 
-	task.wait(25)
+	task.wait(15)
+
 
 	-- Süre bitince sağa doğru kayarak çıkar
 	local exitTween = TweenService:Create(notif, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(1, 320, 1, -20)})
