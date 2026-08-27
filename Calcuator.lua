@@ -1,4 +1,4 @@
--- uguzhub
+i-- uguzhub
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
@@ -1141,263 +1141,310 @@ screenGui.DisplayOrder = 999
 screenGui.IgnoreGuiInset = true
 
 -- =====================================================
--- 2. GİRİŞ EKRANI (CİHAZ SEÇİMİ)
+-- 2. GİRİŞ EKRANI (CAM GÖRÜNÜMLÜ CİHAZ SEÇİMİ)
 -- =====================================================
-local splash = Instance.new("Frame")
-splash.Name = "Splash"
-splash.Size = UDim2.new(1, 0, 1, 0)
-splash.Position = UDim2.new(0, 0, 0, 0)
-splash.BackgroundColor3 = Color3.fromRGB(8, 8, 10)
-splash.BackgroundTransparency = 0
-splash.BorderSizePixel = 0
-splash.ZIndex = 10
-splash.Parent = screenGui
+local dim = Instance.new("Frame")
+dim.Name = "Dim"
+dim.Size = UDim2.new(1, 0, 1, 0)
+dim.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+dim.BackgroundTransparency = 0.45
+dim.BorderSizePixel = 0
+dim.ZIndex = 10
+dim.Parent = screenGui
 
-local title = Instance.new("TextLabel")
-title.Name = "Title"
-title.Size = UDim2.new(0, 400, 0, 60)
-title.Position = UDim2.new(0.5, -200, 0.14, 0)
-title.BackgroundTransparency = 1
-title.Text = "Uguz"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Font = Enum.Font.GothamBlack
-title.TextSize = 40
-title.ZIndex = 11
-title.Parent = splash
+local panel = Instance.new("Frame")
+panel.Name = "Panel"
+panel.AnchorPoint = Vector2.new(0.5, 0.5)
+panel.Size = UDim2.new(0, 600, 0, 420)
+panel.Position = UDim2.new(0.5, 0, 0.5, 0)
+panel.BackgroundColor3 = Color3.fromRGB(18, 26, 40)
+panel.BackgroundTransparency = 0.15
+panel.BorderSizePixel = 0
+panel.ZIndex = 11
+panel.Parent = screenGui
 
-local titleAccent = Instance.new("TextLabel")
-titleAccent.Name = "TitleAccent"
-titleAccent.Size = UDim2.new(0, 400, 0, 60)
-titleAccent.Position = UDim2.new(0.5, -200, 0.14, 0)
-titleAccent.BackgroundTransparency = 1
-titleAccent.Text = "        Hub"
-titleAccent.TextColor3 = Color3.fromRGB(60, 140, 255)
-titleAccent.Font = Enum.Font.GothamBlack
-titleAccent.TextSize = 40
-titleAccent.ZIndex = 11
-titleAccent.Parent = splash
+local panelCorner = Instance.new("UICorner")
+panelCorner.CornerRadius = UDim.new(0, 22)
+panelCorner.Parent = panel
 
-local subtitle = Instance.new("TextLabel")
-subtitle.Name = "Subtitle"
-subtitle.Size = UDim2.new(0, 500, 0, 30)
-subtitle.Position = UDim2.new(0.5, -250, 0.24, 0)
-subtitle.BackgroundTransparency = 1
-subtitle.Text = "SELECT YOUR DEVICE"
-subtitle.TextColor3 = Color3.fromRGB(150, 150, 155)
-subtitle.Font = Enum.Font.GothamBold
-subtitle.TextSize = 16
-subtitle.ZIndex = 11
-subtitle.Parent = splash
+local panelStroke = Instance.new("UIStroke")
+panelStroke.Color = Color3.fromRGB(90, 150, 255)
+panelStroke.Transparency = 0.55
+panelStroke.Thickness = 1.5
+panelStroke.Parent = panel
 
--- Kutu üretici fonksiyon
-local function createDeviceBox(xPos, iconId, caption)
-    local box = Instance.new("TextButton")
-    box.Size = UDim2.new(0, 220, 0, 240)
-    box.Position = UDim2.new(xPos, 0, 0.38, 0)
-    box.AnchorPoint = Vector2.new(0.5, 0)
-    box.BackgroundColor3 = Color3.fromRGB(20, 20, 24)
-    box.AutoButtonColor = false
-    box.Text = ""
-    box.ZIndex = 11
-    box.Parent = splash
+local panelGradient = Instance.new("UIGradient")
+panelGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(35, 45, 70)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(12, 16, 26)),
+})
+panelGradient.Rotation = 60
+panelGradient.Parent = panel
 
-    local boxCorner = Instance.new("UICorner")
-    boxCorner.CornerRadius = UDim.new(0, 18)
-    boxCorner.Parent = box
+local kicker = Instance.new("TextLabel")
+kicker.Size = UDim2.new(1, 0, 0, 20)
+kicker.Position = UDim2.new(0, 0, 0.055, 0)
+kicker.BackgroundTransparency = 1
+kicker.Text = "DEVICE TYPE"
+kicker.TextColor3 = Color3.fromRGB(140, 155, 180)
+kicker.Font = Enum.Font.GothamBold
+kicker.TextSize = 13
+kicker.ZIndex = 12
+kicker.Parent = panel
 
-    local boxStroke = Instance.new("UIStroke")
-    boxStroke.Color = Color3.fromRGB(45, 45, 52)
-    boxStroke.Thickness = 1.5
-    boxStroke.Parent = box
+local heading = Instance.new("TextLabel")
+heading.Size = UDim2.new(1, -40, 0, 46)
+heading.Position = UDim2.new(0, 20, 0.13, 0)
+heading.BackgroundTransparency = 1
+heading.Text = "SELECT YOUR DEVICE"
+heading.TextColor3 = Color3.fromRGB(255, 255, 255)
+heading.Font = Enum.Font.GothamBlack
+heading.TextSize = 30
+heading.ZIndex = 12
+heading.Parent = panel
 
-    local icon = Instance.new("ImageLabel")
-    icon.Name = "Icon"
-    icon.Size = UDim2.new(0, 92, 0, 92)
-    icon.Position = UDim2.new(0.5, -46, 0.16, 0)
-    icon.BackgroundTransparency = 1
-    icon.Image = "rbxassetid://" .. iconId
-    icon.ZIndex = 12
-    icon.Parent = box
+local badge = Instance.new("Frame")
+badge.AnchorPoint = Vector2.new(0.5, 0)
+badge.Size = UDim2.new(0, 160, 0, 34)
+badge.Position = UDim2.new(0.5, 0, 0.32, 0)
+badge.BackgroundColor3 = Color3.fromRGB(60, 140, 255)
+badge.BorderSizePixel = 0
+badge.ZIndex = 12
+badge.Parent = panel
 
-    -- Görseli yüklemeyi dene (DÜZELTİLDİ)
-    task.spawn(function()
-        local success = pcall(function()
-            ContentProvider:PreloadAsync({icon})
-        end)
-        
-        if not success then
-            icon.Visible = false
-            local fallback = Instance.new("TextLabel")
-            fallback.Name = "IconFallback"
-            fallback.Size = icon.Size
-            fallback.Position = icon.Position
-            fallback.BackgroundTransparency = 1
-            fallback.Text = caption:sub(1, 1):upper()
-            fallback.TextColor3 = Color3.fromRGB(255, 255, 255)
-            fallback.Font = Enum.Font.GothamBlack
-            fallback.TextSize = 48
-            fallback.ZIndex = icon.ZIndex
-            fallback.Parent = box
-        end
-    end)
+local badgeCorner = Instance.new("UICorner")
+badgeCorner.CornerRadius = UDim.new(1, 0)
+badgeCorner.Parent = badge
 
-    local label = Instance.new("TextLabel")
-    label.Name = "Caption"
-    label.Size = UDim2.new(1, 0, 0, 26)
-    label.Position = UDim2.new(0, 0, 0.72, 0)
-    label.BackgroundTransparency = 1
+local badgeGradient = Instance.new("UIGradient")
+badgeGradient.Color = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(90, 170, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 100, 220)),
+})
+badgeGradient.Rotation = 90
+badgeGradient.Parent = badge
 
-	-- =====================================================
--- 2. GİRİŞ EKRANI (CİHAZ SEÇİMİ) - DÜZENLENDİ
+local badgeText = Instance.new("TextLabel")
+badgeText.Size = UDim2.new(1, 0, 1, 0)
+badgeText.BackgroundTransparency = 1
+badgeText.Text = "UGUZHUB"
+badgeText.TextColor3 = Color3.fromRGB(255, 255, 255)
+badgeText.Font = Enum.Font.GothamBlack
+badgeText.TextSize = 16
+badgeText.ZIndex = 13
+badgeText.Parent = badge
+
 -- =====================================================
-local splash = Instance.new("Frame")
-splash.Name = "Splash"
-splash.Size = UDim2.new(1, 0, 1, 0)
-splash.Position = UDim2.new(0, 0, 0, 0)
-splash.BackgroundColor3 = Color3.fromRGB(10, 20, 45)
-splash.BackgroundTransparency = 0
-splash.BorderSizePixel = 0
-splash.ZIndex = 10
-splash.Parent = screenGui
+-- Vektör ikon çizim yardımcıları (görsel/asset id gerektirmez)
+-- =====================================================
+local function drawPhoneIcon(parent)
+	local holder = Instance.new("Frame")
+	holder.AnchorPoint = Vector2.new(0.5, 0.5)
+	holder.Size = UDim2.new(0, 100, 0, 100)
+	holder.Position = UDim2.new(0.5, 0, 0.42, 0)
+	holder.BackgroundTransparency = 1
+	holder.ZIndex = 13
+	holder.Parent = parent
 
-local title = Instance.new("TextLabel")
-title.Name = "Title"
-title.Size = UDim2.new(0, 400, 0, 60)
-title.Position = UDim2.new(0.5, -200, 0.10, 0)
-title.BackgroundTransparency = 1
-title.Text = "UGUZHUB"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Font = Enum.Font.GothamBlack
-title.TextSize = 48
-title.ZIndex = 11
-title.Parent = splash
+	local body = Instance.new("Frame")
+	body.AnchorPoint = Vector2.new(0.5, 0.5)
+	body.Size = UDim2.new(0, 46, 0, 82)
+	body.Position = UDim2.new(0.5, 0, 0.5, 0)
+	body.BackgroundTransparency = 1
+	body.ZIndex = 13
+	body.Parent = holder
 
-local titleAccent = Instance.new("TextLabel")
-titleAccent.Name = "TitleAccent"
-titleAccent.Size = UDim2.new(0, 120, 0, 60)
-titleAccent.Position = UDim2.new(0.5, 90, 0.10, 0)
-titleAccent.BackgroundTransparency = 1
-titleAccent.Text = "HUB"
-titleAccent.TextColor3 = Color3.fromRGB(60, 140, 255)
-titleAccent.Font = Enum.Font.GothamBlack
-titleAccent.TextSize = 48
-titleAccent.ZIndex = 12
-titleAccent.Parent = splash
+	local bodyCorner = Instance.new("UICorner")
+	bodyCorner.CornerRadius = UDim.new(0, 10)
+	bodyCorner.Parent = body
 
-local subtitle = Instance.new("TextLabel")
-subtitle.Name = "Subtitle"
-subtitle.Size = UDim2.new(0, 500, 0, 30)
-subtitle.Position = UDim2.new(0.5, -250, 0.20, 0)
-subtitle.BackgroundTransparency = 1
-subtitle.Text = "SELECT YOUR DEVICE"
-subtitle.TextColor3 = Color3.fromRGB(180, 190, 210)
-subtitle.Font = Enum.Font.GothamBold
-subtitle.TextSize = 16
-subtitle.ZIndex = 11
-subtitle.Parent = splash
+	local bodyStroke = Instance.new("UIStroke")
+	bodyStroke.Color = Color3.fromRGB(230, 235, 245)
+	bodyStroke.Thickness = 3
+	bodyStroke.Parent = body
 
-local function createDeviceBox(xPos, iconEmoji, caption)
-	local box = Instance.new("TextButton")
-	box.Size = UDim2.new(0, 140, 0, 160)
-	box.Position = UDim2.new(xPos, 0, 0.38, 0)
-	box.AnchorPoint = Vector2.new(0.5, 0)
-	box.BackgroundColor3 = Color3.fromRGB(25, 35, 60)
-	box.AutoButtonColor = false
-	box.Text = ""
-	box.ZIndex = 11
-	box.Parent = splash
+	local homeBtn = Instance.new("Frame")
+	homeBtn.AnchorPoint = Vector2.new(0.5, 0.5)
+	homeBtn.Size = UDim2.new(0, 8, 0, 8)
+	homeBtn.Position = UDim2.new(0.5, 0, 0.88, 0)
+	homeBtn.BackgroundColor3 = Color3.fromRGB(230, 235, 245)
+	homeBtn.BorderSizePixel = 0
+	homeBtn.ZIndex = 13
+	homeBtn.Parent = body
 
-	local boxCorner = Instance.new("UICorner")
-	boxCorner.CornerRadius = UDim.new(0, 14)
-	boxCorner.Parent = box
+	local homeCorner = Instance.new("UICorner")
+	homeCorner.CornerRadius = UDim.new(1, 0)
+	homeCorner.Parent = homeBtn
 
-	local boxStroke = Instance.new("UIStroke")
-	boxStroke.Color = Color3.fromRGB(80, 120, 200)
-	boxStroke.Thickness = 1.5
-	boxStroke.Parent = box
-
-	local icon = Instance.new("TextLabel")
-	icon.Name = "Icon"
-	icon.Size = UDim2.new(0, 60, 0, 60)
-	icon.Position = UDim2.new(0.5, -30, 0.12, 0)
-	icon.BackgroundTransparency = 1
-	icon.Text = iconEmoji
-	icon.TextColor3 = Color3.fromRGB(255, 255, 255)
-	icon.Font = Enum.Font.GothamBlack
-	icon.TextSize = 55
-	icon.TextScaled = true
-	icon.ZIndex = 12
-	icon.Parent = box
-
-	local label = Instance.new("TextLabel")
-	label.Name = "Caption"
-	label.Size = UDim2.new(1, 0, 0, 24)
-	label.Position = UDim2.new(0, 0, 0.72, 0)
-	label.BackgroundTransparency = 1
-	label.Text = caption
-	label.TextColor3 = Color3.fromRGB(220, 230, 255)
-	label.Font = Enum.Font.GothamBold
-	label.TextSize = 15
-	label.ZIndex = 12
-	label.Parent = box
-
-	return box
+	return holder
 end
 
-local mobileBox = createDeviceBox(0.35, "📱", "MOBILE")
-local pcBox = createDeviceBox(0.65, "🖥️", "PC & TABLET")
+local function drawPcTabletIcon(parent)
+	local holder = Instance.new("Frame")
+	holder.AnchorPoint = Vector2.new(0.5, 0.5)
+	holder.Size = UDim2.new(0, 100, 0, 100)
+	holder.Position = UDim2.new(0.5, 0, 0.42, 0)
+	holder.BackgroundTransparency = 1
+	holder.ZIndex = 13
+	holder.Parent = parent
 
-local comingSoonOverlay = Instance.new("Frame")
-comingSoonOverlay.Size = UDim2.new(1, 0, 1, 0)
-comingSoonOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-comingSoonOverlay.BackgroundTransparency = 0.6
-comingSoonOverlay.ZIndex = 13
-comingSoonOverlay.Parent = pcBox
+	local monitor = Instance.new("Frame")
+	monitor.AnchorPoint = Vector2.new(0.5, 0.5)
+	monitor.Size = UDim2.new(0, 68, 0, 46)
+	monitor.Position = UDim2.new(0.42, 0, 0.4, 0)
+	monitor.BackgroundTransparency = 1
+	monitor.ZIndex = 13
+	monitor.Parent = holder
 
-local comingSoonCorner = Instance.new("UICorner")
-comingSoonCorner.CornerRadius = UDim.new(0, 14)
-comingSoonCorner.Parent = comingSoonOverlay
+	local monitorCorner = Instance.new("UICorner")
+	monitorCorner.CornerRadius = UDim.new(0, 6)
+	monitorCorner.Parent = monitor
 
-local comingSoonText = Instance.new("TextLabel")
-comingSoonText.Size = UDim2.new(1, 0, 0, 28)
-comingSoonText.Position = UDim2.new(0, 0, 0.38, 0)
-comingSoonText.BackgroundTransparency = 1
-comingSoonText.Text = "COMING SOON"
-comingSoonText.TextColor3 = Color3.fromRGB(255, 255, 255)
-comingSoonText.Font = Enum.Font.GothamBlack
-comingSoonText.TextSize = 18
-comingSoonText.ZIndex = 14
-comingSoonText.Parent = comingSoonOverlay
+	local monitorStroke = Instance.new("UIStroke")
+	monitorStroke.Color = Color3.fromRGB(230, 235, 245)
+	monitorStroke.Thickness = 3
+	monitorStroke.Parent = monitor
 
-pcBox.Active = false
-pcBox.AutoButtonColor = false
+	local stand = Instance.new("Frame")
+	stand.AnchorPoint = Vector2.new(0.5, 0)
+	stand.Size = UDim2.new(0, 22, 0, 8)
+	stand.Position = UDim2.new(0.42, 0, 0.635, 0)
+	stand.BackgroundColor3 = Color3.fromRGB(230, 235, 245)
+	stand.BorderSizePixel = 0
+	stand.ZIndex = 13
+	stand.Parent = holder
 
-mobileBox.MouseEnter:Connect(function()
-	TweenService:Create(mobileBox, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 55, 90)}):Play()
+	local standCorner = Instance.new("UICorner")
+	standCorner.CornerRadius = UDim.new(0, 3)
+	standCorner.Parent = stand
+
+	local tablet = Instance.new("Frame")
+	tablet.AnchorPoint = Vector2.new(0.5, 0.5)
+	tablet.Size = UDim2.new(0, 32, 0, 46)
+	tablet.Position = UDim2.new(0.72, 0, 0.58, 0)
+	tablet.BackgroundColor3 = Color3.fromRGB(18, 26, 40)
+	tablet.BackgroundTransparency = 0.1
+	tablet.BorderSizePixel = 0
+	tablet.ZIndex = 14
+	tablet.Parent = holder
+
+	local tabletCorner = Instance.new("UICorner")
+	tabletCorner.CornerRadius = UDim.new(0, 6)
+	tabletCorner.Parent = tablet
+
+	local tabletStroke = Instance.new("UIStroke")
+	tabletStroke.Color = Color3.fromRGB(230, 235, 245)
+	tabletStroke.Thickness = 3
+	tabletStroke.Parent = tablet
+
+	return holder
+end
+
+-- Kart üretici fonksiyon
+local function createCard(xPos, title)
+	local card = Instance.new(title == "MOBILE" and "TextButton" or "Frame")
+	card.Size = UDim2.new(0, 260, 0, 220)
+	card.AnchorPoint = Vector2.new(0.5, 0)
+	card.Position = UDim2.new(xPos, 0, 0.44, 0)
+	card.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	card.BackgroundTransparency = 0.93
+	card.BorderSizePixel = 0
+	card.ZIndex = 12
+	if card:IsA("TextButton") then
+		card.AutoButtonColor = false
+		card.Text = ""
+	end
+	card.Parent = panel
+
+	local cardCorner = Instance.new("UICorner")
+	cardCorner.CornerRadius = UDim.new(0, 18)
+	cardCorner.Parent = card
+
+	local cardStroke = Instance.new("UIStroke")
+	cardStroke.Name = "CardStroke"
+	cardStroke.Color = Color3.fromRGB(255, 255, 255)
+	cardStroke.Transparency = 0.75
+	cardStroke.Thickness = 1.5
+	cardStroke.Parent = card
+
+	local cardTitle = Instance.new("TextLabel")
+	cardTitle.Size = UDim2.new(1, 0, 0, 24)
+	cardTitle.Position = UDim2.new(0, 0, 0.1, 0)
+	cardTitle.BackgroundTransparency = 1
+	cardTitle.Text = title
+	cardTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+	cardTitle.Font = Enum.Font.GothamBlack
+	cardTitle.TextSize = 18
+	cardTitle.ZIndex = 13
+	cardTitle.Parent = card
+
+	return card
+end
+
+local mobileCard = createCard(0.28, "MOBILE")
+local pcCard = createCard(0.72, "PC & TABLET")
+
+drawPhoneIcon(mobileCard)
+drawPcTabletIcon(pcCard)
+
+-- Hover efekti (sadece mobil, seçilebilir olduğu belli olsun)
+mobileCard.MouseEnter:Connect(function()
+	TweenService:Create(mobileCard, TweenInfo.new(0.2), {BackgroundTransparency = 0.85}):Play()
+	TweenService:Create(mobileCard.CardStroke, TweenInfo.new(0.2), {Transparency = 0.2, Color = Color3.fromRGB(90, 170, 255)}):Play()
 end)
-mobileBox.MouseLeave:Connect(function()
-	TweenService:Create(mobileBox, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(25, 35, 60)}):Play()
+mobileCard.MouseLeave:Connect(function()
+	TweenService:Create(mobileCard, TweenInfo.new(0.2), {BackgroundTransparency = 0.93}):Play()
+	TweenService:Create(mobileCard.CardStroke, TweenInfo.new(0.2), {Transparency = 0.75, Color = Color3.fromRGB(255, 255, 255)}):Play()
 end)
+
+-- "COMING SOON" çapraz şerit (PC & Tablet kartının üstünde)
+local ribbon = Instance.new("Frame")
+ribbon.AnchorPoint = Vector2.new(0.5, 0.5)
+ribbon.Size = UDim2.new(0, 320, 0, 32)
+ribbon.Position = UDim2.new(0.5, 0, 0.62, 0)
+ribbon.Rotation = -28
+ribbon.BackgroundColor3 = Color3.fromRGB(225, 230, 240)
+ribbon.BackgroundTransparency = 0.05
+ribbon.BorderSizePixel = 0
+ribbon.ZIndex = 15
+ribbon.Parent = pcCard
+
+local ribbonText = Instance.new("TextLabel")
+ribbonText.Size = UDim2.new(1, 0, 1, 0)
+ribbonText.BackgroundTransparency = 1
+ribbonText.Text = "COMING SOON"
+ribbonText.TextColor3 = Color3.fromRGB(18, 26, 40)
+ribbonText.Font = Enum.Font.GothamBlack
+ribbonText.TextSize = 14
+ribbonText.ZIndex = 16
+ribbonText.Parent = ribbon
+
+pcCard.ClipsDescendants = false
+
 -- =====================================================
 -- 3. GEÇİŞ ANİMASYONU (Mobil seçilince ekran yavaşça silinir)
 -- =====================================================
-local function fadeOutAndDestroy(frame, duration)
+local function fadeOutAndDestroy(duration)
 	local tweens = {}
+	local tInfo = TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
-	table.insert(tweens, TweenService:Create(frame, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1}))
+	table.insert(tweens, TweenService:Create(dim, tInfo, {BackgroundTransparency = 1}))
+	table.insert(tweens, TweenService:Create(panel, tInfo, {BackgroundTransparency = 1}))
 
-	for _, d in ipairs(frame:GetDescendants()) do
+	for _, d in ipairs(panel:GetDescendants()) do
 		if d:IsA("TextLabel") or d:IsA("TextButton") then
-			table.insert(tweens, TweenService:Create(d, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TextTransparency = 1}))
-			if d:IsA("TextButton") then
-				table.insert(tweens, TweenService:Create(d, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1}))
+			table.insert(tweens, TweenService:Create(d, tInfo, {TextTransparency = 1}))
+			if d:IsA("TextButton") or d:IsA("Frame") then
+				pcall(function()
+					table.insert(tweens, TweenService:Create(d, tInfo, {BackgroundTransparency = 1}))
+				end)
 			end
-		elseif d:IsA("ImageLabel") or d:IsA("ImageButton") then
-			table.insert(tweens, TweenService:Create(d, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {ImageTransparency = 1}))
 		elseif d:IsA("Frame") then
-			table.insert(tweens, TweenService:Create(d, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1}))
+			pcall(function()
+				table.insert(tweens, TweenService:Create(d, tInfo, {BackgroundTransparency = 1}))
+			end)
 		elseif d:IsA("UIStroke") then
-			table.insert(tweens, TweenService:Create(d, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Transparency = 1}))
+			table.insert(tweens, TweenService:Create(d, tInfo, {Transparency = 1}))
 		end
 	end
 
@@ -1406,7 +1453,8 @@ local function fadeOutAndDestroy(frame, duration)
 	end
 
 	task.wait(duration)
-	frame:Destroy()
+	dim:Destroy()
+	panel:Destroy()
 end
 
 -- =====================================================
@@ -1417,7 +1465,7 @@ local function showActiveNotification()
 	notif.Name = "NotifyBar"
 	notif.AnchorPoint = Vector2.new(1, 1)
 	notif.Size = UDim2.new(0, 280, 0, 78)
-	notif.Position = UDim2.new(1, 320, 1, -20) -- ekranın dışında başlar
+	notif.Position = UDim2.new(1, 320, 1, -20)
 	notif.BackgroundColor3 = Color3.fromRGB(16, 16, 20)
 	notif.BorderSizePixel = 0
 	notif.ZIndex = 20
@@ -1444,7 +1492,6 @@ local function showActiveNotification()
 	dotCorner.CornerRadius = UDim.new(1, 0)
 	dotCorner.Parent = dot
 
-	-- Üst satır: Value Calculator Online!
 	local topText = Instance.new("TextLabel")
 	topText.Size = UDim2.new(1, -40, 0, 18)
 	topText.Position = UDim2.new(0, 34, 0, 6)
@@ -1457,7 +1504,6 @@ local function showActiveNotification()
 	topText.ZIndex = 21
 	topText.Parent = notif
 
-	-- Ortadaki ayırıcı çizgi
 	local divider = Instance.new("Frame")
 	divider.Size = UDim2.new(1, -28, 0, 1)
 	divider.Position = UDim2.new(0, 14, 0, 30)
@@ -1466,7 +1512,6 @@ local function showActiveNotification()
 	divider.ZIndex = 21
 	divider.Parent = notif
 
-	-- Alt satır: Value Hesaplayıcı Şuanda Aktif!
 	local bottomText = Instance.new("TextLabel")
 	bottomText.Size = UDim2.new(1, -40, 0, 18)
 	bottomText.Position = UDim2.new(0, 34, 0, 36)
@@ -1479,7 +1524,6 @@ local function showActiveNotification()
 	bottomText.ZIndex = 21
 	bottomText.Parent = notif
 
-	-- İlerleme çubuğu (15 saniyede boşalır)
 	local track = Instance.new("Frame")
 	track.Size = UDim2.new(1, -28, 0, 4)
 	track.Position = UDim2.new(0, 14, 1, -12)
@@ -1516,19 +1560,15 @@ local function showActiveNotification()
 	leadDotCorner.CornerRadius = UDim.new(1, 0)
 	leadDotCorner.Parent = leadDot
 
-	-- Giriş animasyonu: sağdan kayarak gelir
 	TweenService:Create(notif, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(1, -20, 1, -20)}):Play()
 
 	task.wait(0.5)
 
-	-- 15 saniyelik ilerleme çubuğu (dolu -> boş)
 	local fillTween = TweenService:Create(fill, TweenInfo.new(15, Enum.EasingStyle.Linear), {Size = UDim2.new(0, 0, 1, 0)})
 	fillTween:Play()
 
 	task.wait(15)
 
-
-	-- Süre bitince sağa doğru kayarak çıkar
 	local exitTween = TweenService:Create(notif, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(1, 320, 1, -20)})
 	exitTween:Play()
 	exitTween.Completed:Wait()
@@ -1536,14 +1576,13 @@ local function showActiveNotification()
 end
 
 -- =====================================================
--- 5. CİHAZ SEÇİMİ
+-- 5. CİHAZ SEÇİMİ (Next yok, direkt tıklayınca aktifleşir)
 -- =====================================================
-mobileBox.MouseButton1Click:Connect(function()
-	mobileBox.Active = false
-	pcBox.Active = false
+mobileCard.MouseButton1Click:Connect(function()
+	mobileCard.Active = false
 
 	task.spawn(function()
-		fadeOutAndDestroy(splash, 1.2)
+		fadeOutAndDestroy(1.2)
 		scriptEnabled = true
 		showActiveNotification()
 	end)
@@ -1557,9 +1596,6 @@ local function round(val, decimal)
 	return math.floor(val * mult + 0.5) / mult
 end
 
--- Bir eleman gerçekten görünür mü kontrol eder (kendisi VE tüm üst frame'leri Visible olmalı).
--- Oyun bir eşyayı çekince slotu genelde Visible=false yapıp text'i temizlemiyor;
--- bu kontrol olmadan script o eski/gizli slotu saymaya devam ediyordu.
 local function isActuallyVisible(inst, root)
 	local current = inst
 	while current and current ~= root do
@@ -1571,9 +1607,6 @@ local function isActuallyVisible(inst, root)
 	return true
 end
 
--- "YOUR OFFER" / "THEIR OFFER" başlığını bulur ve o başlığa gömülü bir toplam etiketi ekler
--- (Bu ekstra bir menü DEĞİL, oyunun kendi trade arayüzünün bir parçası olarak eklenir.
---  Trade kapanınca bu etiketler de kapanır, ayrı bir pencere/kutu yoktur.)
 local function getOrCreateHeaderTotal(gui, headerText)
 	for _, d in ipairs(gui:GetDescendants()) do
 		if d:IsA("TextLabel") and d.Text:upper():find(headerText) then
@@ -1621,12 +1654,10 @@ task.spawn(function()
 							if desc:IsA("TextLabel") and desc.Text ~= "" and desc.Name ~= "HeaderTotalTag" and isActuallyVisible(desc, gui) then
 								local rawText = desc.Text
 
-								-- Oyunun kendi bozuk "Live Total Value" yazısını gizle
 								if rawText:lower():find("live total value") then
 									desc.Visible = false
 								end
 
-								-- Oyunun kendi saçma 0.4 veya varsayılan etiketlerini işleme alma
 								if not rawText:find("Val") then
 									local count = 1
 									local cleanName = rawText:match("^(.-)%s*x(%d+)$")
@@ -1642,7 +1673,6 @@ task.spawn(function()
 									if baseVal then
 										local totalItemVal = baseVal * count
 
-										-- Eğer daha önce etiket eklenmemişse sıfırdan oluştur
 										if not desc:FindFirstChild("CleanTag") then
 											local tag = Instance.new("TextLabel")
 											tag.Name = "CleanTag"
@@ -1658,11 +1688,9 @@ task.spawn(function()
 											tag.ZIndex = desc.ZIndex + 5
 											tag.Parent = desc
 										else
-											-- Eşya sayısı veya türü değiştiğinde anlık güncelle
 											desc.CleanTag.Text = tostring(round(totalItemVal, 2)) .. " Val"
 										end
 
-										-- Hangi taraftaysa (senin teklifin / karşı taraf) o tarafın toplamına ekle
 										if yourOfferFrame and desc:IsDescendantOf(yourOfferFrame) then
 											yourTotal = yourTotal + totalItemVal
 										elseif theirOfferFrame and desc:IsDescendantOf(theirOfferFrame) then
