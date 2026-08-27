@@ -1,7 +1,3 @@
--- =====================================================
--- UGUZHUB V2 - DELTA MOBIL UYUMLU VERSİYON
--- =====================================================
-
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 local TweenService = game:GetService("TweenService")
@@ -9,7 +5,7 @@ local ContentProvider = game:GetService("ContentProvider")
 local player = Players.LocalPlayer
 
 -- =====================================================
--- 1. VALUE DATABASE (BURAYI DOLDUR)
+-- 1. VALUE DATABASE 
 -- =====================================================
 local Values = {
 	["Chroma Traveler's"] = 220000,
