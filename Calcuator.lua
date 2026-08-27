@@ -1131,10 +1131,12 @@ local Values = {
 	["Yellow"] = 0.002,
 	["Clown"] = 0.0015625,
 }
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "MM2ZeroStartTracker"
 screenGui.Parent = CoreGui
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.DisplayOrder = 999
 
 -- Sol üst şık açma/kapatma menü butonu
 local mainFrame = Instance.new("Frame")
@@ -1179,7 +1181,7 @@ local MINIMIZE_ICON_CLOSED = "rbxassetid://15037279415" -- panel kapalıyken gö
 
 local minimizeBtn = Instance.new("ImageButton")
 minimizeBtn.Size = UDim2.new(0, 34, 0, 34)
-minimizeBtn.Position = UDim2.new(0.02, 0, 0.08, 0)
+minimizeBtn.Position = UDim2.new(0.02, 0, 0.15, 60)
 minimizeBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 minimizeBtn.BorderSizePixel = 0
 minimizeBtn.Image = MINIMIZE_ICON_OPEN
