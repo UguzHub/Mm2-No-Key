@@ -1171,13 +1171,18 @@ dim.Parent = screenGui
 local panel = Instance.new("Frame")
 panel.Name = "Panel"
 panel.AnchorPoint = Vector2.new(0.5, 0.5)
-panel.Size = UDim2.new(0, 600, 0, 420)
+panel.Size = UDim2.new(0.55, 0, 0.62, 0)
 panel.Position = UDim2.new(0.5, 0, 0.5, 0)
 panel.BackgroundColor3 = Color3.fromRGB(18, 26, 40)
 panel.BackgroundTransparency = 0.15
 panel.BorderSizePixel = 0
 panel.ZIndex = 11
 panel.Parent = screenGui
+
+local panelConstraint = Instance.new("UISizeConstraint")
+panelConstraint.MinSize = Vector2.new(380, 320)
+panelConstraint.MaxSize = Vector2.new(620, 430)
+panelConstraint.Parent = panel
 
 local panelCorner = Instance.new("UICorner")
 panelCorner.CornerRadius = UDim.new(0, 22)
@@ -1221,7 +1226,7 @@ heading.Parent = panel
 
 local badge = Instance.new("Frame")
 badge.AnchorPoint = Vector2.new(0.5, 0)
-badge.Size = UDim2.new(0, 160, 0, 34)
+badge.Size = UDim2.new(0, 128, 0, 26)
 badge.Position = UDim2.new(0.5, 0, 0.32, 0)
 badge.BackgroundColor3 = Color3.fromRGB(60, 140, 255)
 badge.BorderSizePixel = 0
@@ -1246,7 +1251,7 @@ badgeText.BackgroundTransparency = 1
 badgeText.Text = "UGUZHUB"
 badgeText.TextColor3 = Color3.fromRGB(255, 255, 255)
 badgeText.Font = Enum.Font.GothamBlack
-badgeText.TextSize = 16
+badgeText.TextSize = 13
 badgeText.ZIndex = 13
 badgeText.Parent = badge
 
@@ -1359,7 +1364,7 @@ end
 -- Kart üretici fonksiyon
 local function createCard(xPos, title)
 	local card = Instance.new(title == "MOBILE" and "TextButton" or "Frame")
-	card.Size = UDim2.new(0, 260, 0, 220)
+	card.Size = UDim2.new(0.42, 0, 0.5, 0)
 	card.AnchorPoint = Vector2.new(0.5, 0)
 	card.Position = UDim2.new(xPos, 0, 0.44, 0)
 	card.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -1416,8 +1421,8 @@ end)
 -- "COMING SOON" çapraz şerit (PC & Tablet kartının üstünde)
 local ribbon = Instance.new("Frame")
 ribbon.AnchorPoint = Vector2.new(0.5, 0.5)
-ribbon.Size = UDim2.new(0, 320, 0, 32)
-ribbon.Position = UDim2.new(0.5, 0, 0.62, 0)
+ribbon.Size = UDim2.new(1.15, 0, 0, 30)
+ribbon.Position = UDim2.new(0.5, 0, 0.6, 0)
 ribbon.Rotation = -28
 ribbon.BackgroundColor3 = Color3.fromRGB(225, 230, 240)
 ribbon.BackgroundTransparency = 0.05
@@ -1435,7 +1440,8 @@ ribbonText.TextSize = 14
 ribbonText.ZIndex = 16
 ribbonText.Parent = ribbon
 
-pcCard.ClipsDescendants = false
+-- Şerit kutunun dışına asla taşmasın
+pcCard.ClipsDescendants = true
 
 -- =====================================================
 -- 3. GEÇİŞ ANİMASYONU (Mobil seçilince ekran yavaşça silinir)
