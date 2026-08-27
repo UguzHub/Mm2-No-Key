@@ -1135,10 +1135,26 @@ local scriptEnabled = false
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "UguzHub"
-screenGui.Parent = CoreGui
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 screenGui.DisplayOrder = 999
 screenGui.IgnoreGuiInset = true
+
+local parented = false
+if typeof(gethui) == "function" then
+	local ok = pcall(function()
+		screenGui.Parent = gethui()
+	end)
+	parented = ok
+end
+if not parented then
+	local ok = pcall(function()
+		screenGui.Parent = CoreGui
+	end)
+	parented = ok
+end
+if not parented then
+	screenGui.Parent = player:WaitForChild("PlayerGui")
+end
 
 -- =====================================================
 -- 2. GİRİŞ EKRANI (CAM GÖRÜNÜMLÜ CİHAZ SEÇİMİ)
