@@ -719,7 +719,7 @@ local Values = {
 	["Bones"] = 0.075,
 	["Curse"] = 0.075,
 	["Elite"] = 0.075,
-	["Frostflame"] = 0.075,
+	["Frostflame"] = 0.1,
 	["Ghosts"] = 0.075,
 	["Gingercookie"] = 0.075,
 	["Hazard"] = 0.075,
@@ -1178,6 +1178,37 @@ local function round(val, decimal)
 	return math.floor(val * mult + 0.5) / mult
 end
 
+-- "YOUR OFFER" / "THEIR OFFER" başlığını bulur ve o başlığa gömülü bir toplam etiketi ekler
+-- (Bu ekstra bir menü DEĞİL, oyunun kendi trade arayüzünün bir parçası olarak eklenir.
+--  Trade kapanınca bu etiketler de kapanır, ayrı bir pencere/kutu yoktur.)
+local function getOrCreateHeaderTotal(gui, headerText)
+	for _, d in ipairs(gui:GetDescendants()) do
+		if d:IsA("TextLabel") and d.Text:upper():find(headerText) then
+			local existing = d:FindFirstChild("HeaderTotalTag")
+			if existing then
+				return d.Parent, existing
+			end
+
+			local tag = Instance.new("TextLabel")
+			tag.Name = "HeaderTotalTag"
+			tag.Size = UDim2.new(0, 160, 1, 0)
+			tag.Position = UDim2.new(1, 10, 0, 0)
+			tag.BackgroundTransparency = 1
+			tag.Text = "Toplam: 0"
+			tag.TextColor3 = Color3.fromRGB(0, 255, 100)
+			tag.TextStrokeTransparency = 0
+			tag.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+			tag.TextSize = 14
+			tag.TextXAlignment = Enum.TextXAlignment.Left
+			tag.Font = Enum.Font.GothamBold
+			tag.ZIndex = d.ZIndex + 5
+			tag.Parent = d
+			return d.Parent, tag
+		end
+	end
+	return nil, nil
+end
+
 task.spawn(function()
 	while screenGui.Parent do
 		task.wait(0.3)
@@ -1186,9 +1217,19 @@ task.spawn(function()
 			if playerGui then
 				for _, gui in ipairs(playerGui:GetChildren()) do
 					if gui:IsA("ScreenGui") and (gui.Name:lower():find("trade") or gui.Name:lower():find("takas")) then
+						local yourOfferFrame, yourTotalTag = getOrCreateHeaderTotal(gui, "YOUR OFFER")
+						local theirOfferFrame, theirTotalTag = getOrCreateHeaderTotal(gui, "THEIR OFFER")
+						local yourTotal, theirTotal = 0, 0
+
 						for _, desc in ipairs(gui:GetDescendants()) do
-							if desc:IsA("TextLabel") and desc.Text ~= "" then
+							if desc:IsA("TextLabel") and desc.Text ~= "" and desc.Name ~= "HeaderTotalTag" then
 								local rawText = desc.Text
+
+								-- Oyunun kendi bozuk "Live Total Value" yazısını gizle
+								if rawText:lower():find("live total value") then
+									desc.Visible = false
+								end
+
 								-- Oyunun kendi saçma 0.4 veya varsayılan etiketlerini işleme alma
 								if not rawText:find("Val") then
 									local count = 1
@@ -1200,11 +1241,11 @@ task.spawn(function()
 										cleanName = rawText:match("^(.-)%s*%(") or rawText
 										cleanName = cleanName:gsub("^%s*(.-)%s*$", "%1")
 									end
-									
-									local baseVal = Values[cleanName]
+
+									local baseVal = (cleanName ~= "" and Values[cleanName]) or nil
 									if baseVal then
 										local totalItemVal = baseVal * count
-										
+
 										-- Eğer daha önce etiket eklenmemişse sıfırdan oluştur
 										if not desc:FindFirstChild("CleanTag") then
 											local tag = Instance.new("TextLabel")
@@ -1224,9 +1265,23 @@ task.spawn(function()
 											-- Eşya sayısı veya türü değiştiğinde anlık güncelle
 											desc.CleanTag.Text = tostring(round(totalItemVal, 2)) .. " Val"
 										end
+
+										-- Hangi taraftaysa (senin teklifin / karşı taraf) o tarafın toplamına ekle
+										if yourOfferFrame and desc:IsDescendantOf(yourOfferFrame) then
+											yourTotal = yourTotal + totalItemVal
+										elseif theirOfferFrame and desc:IsDescendantOf(theirOfferFrame) then
+											theirTotal = theirTotal + totalItemVal
+										end
 									end
 								end
 							end
+						end
+
+						if yourTotalTag then
+							yourTotalTag.Text = "Toplam: " .. tostring(round(yourTotal, 2))
+						end
+						if theirTotalTag then
+							theirTotalTag.Text = "Toplam: " .. tostring(round(theirTotal, 2))
 						end
 					end
 				end
