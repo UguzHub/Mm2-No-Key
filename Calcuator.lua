@@ -1194,72 +1194,69 @@ subtitle.Parent = splash
 
 -- Kutu üretici fonksiyon
 local function createDeviceBox(xPos, iconId, caption)
-	local box = Instance.new("TextButton")
-	box.Size = UDim2.new(0, 220, 0, 240)
-	box.Position = UDim2.new(xPos, 0, 0.38, 0)
-	box.AnchorPoint = Vector2.new(0.5, 0)
-	box.BackgroundColor3 = Color3.fromRGB(20, 20, 24)
-	box.AutoButtonColor = false
-	box.Text = ""
-	box.ZIndex = 11
-	box.Parent = splash
+    local box = Instance.new("TextButton")
+    box.Size = UDim2.new(0, 220, 0, 240)
+    box.Position = UDim2.new(xPos, 0, 0.38, 0)
+    box.AnchorPoint = Vector2.new(0.5, 0)
+    box.BackgroundColor3 = Color3.fromRGB(20, 20, 24)
+    box.AutoButtonColor = false
+    box.Text = ""
+    box.ZIndex = 11
+    box.Parent = splash
 
-	local boxCorner = Instance.new("UICorner")
-	boxCorner.CornerRadius = UDim.new(0, 18)
-	boxCorner.Parent = box
+    local boxCorner = Instance.new("UICorner")
+    boxCorner.CornerRadius = UDim.new(0, 18)
+    boxCorner.Parent = box
 
-	local boxStroke = Instance.new("UIStroke")
-	boxStroke.Color = Color3.fromRGB(45, 45, 52)
-	boxStroke.Thickness = 1.5
-	boxStroke.Parent = box
+    local boxStroke = Instance.new("UIStroke")
+    boxStroke.Color = Color3.fromRGB(45, 45, 52)
+    boxStroke.Thickness = 1.5
+    boxStroke.Parent = box
 
-	local icon = Instance.new("ImageLabel")
-	icon.Name = "Icon"
-	icon.Size = UDim2.new(0, 92, 0, 92)
-	icon.Position = UDim2.new(0.5, -46, 0.16, 0)
-	icon.BackgroundTransparency = 1
-	icon.Image = "rbxassetid://" .. iconId
-	icon.ZIndex = 12
-	icon.Parent = box
+    local icon = Instance.new("ImageLabel")
+    icon.Name = "Icon"
+    icon.Size = UDim2.new(0, 92, 0, 92)
+    icon.Position = UDim2.new(0.5, -46, 0.16, 0)
+    icon.BackgroundTransparency = 1
+    icon.Image = "rbxassetid://" .. iconId
+    icon.ZIndex = 12
+    icon.Parent = box
 
-	local label = Instance.new("TextLabel")
-	label.Name = "Caption"
-	label.Size = UDim2.new(1, 0, 0, 26)
-	label.Position = UDim2.new(0, 0, 0.72, 0)
-	label.BackgroundTransparency = 1
-	label.Text = caption
-	label.TextColor3 = Color3.fromRGB(235, 235, 235)
-	label.Font = Enum.Font.GothamBold
-	label.TextSize = 18
-	label.ZIndex = 12
-	label.Parent = box
+    -- Görseli yüklemeyi dene (DÜZELTİLDİ)
+    task.spawn(function()
+        local success = pcall(function()
+            ContentProvider:PreloadAsync({icon})
+        end)
+        
+        if not success then
+            icon.Visible = false
+            local fallback = Instance.new("TextLabel")
+            fallback.Name = "IconFallback"
+            fallback.Size = icon.Size
+            fallback.Position = icon.Position
+            fallback.BackgroundTransparency = 1
+            fallback.Text = caption:sub(1, 1):upper()
+            fallback.TextColor3 = Color3.fromRGB(255, 255, 255)
+            fallback.Font = Enum.Font.GothamBlack
+            fallback.TextSize = 48
+            fallback.ZIndex = icon.ZIndex
+            fallback.Parent = box
+        end
+    end)
 
-	-- Görsel yüklenemezse (geçersiz/yanlış asset id ise) baş harfi gösteren yedek
-	task.spawn(function()
-		local ok = pcall(function()
-			ContentProvider:PreloadAsync({icon}, function(_, status)
-				if status ~= Enum.AssetFetchStatus.Success then
-					icon.Visible = false
-					local fallback = Instance.new("TextLabel")
-					fallback.Name = "IconFallback"
-					fallback.Size = icon.Size
-					fallback.Position = icon.Position
-					fallback.BackgroundTransparency = 1
-					fallback.Text = caption:sub(1, 1):upper()
-					fallback.TextColor3 = Color3.fromRGB(90, 90, 100)
-					fallback.Font = Enum.Font.GothamBlack
-					fallback.TextSize = 48
-					fallback.ZIndex = icon.ZIndex
-					fallback.Parent = box
-				end
-			end)
-		end)
-		if not ok then
-			icon.Visible = false
-		end
-	end)
+    local label = Instance.new("TextLabel")
+    label.Name = "Caption"
+    label.Size = UDim2.new(1, 0, 0, 26)
+    label.Position = UDim2.new(0, 0, 0.72, 0)
+    label.BackgroundTransparency = 1
+    label.Text = caption
+    label.TextColor3 = Color3.fromRGB(235, 235, 235)
+    label.Font = Enum.Font.GothamBold
+    label.TextSize = 18
+    label.ZIndex = 12
+    label.Parent = box
 
-	return box
+    return box
 end
 
 local mobileBox = createDeviceBox(0.33, "14040313905", "Mobile")
