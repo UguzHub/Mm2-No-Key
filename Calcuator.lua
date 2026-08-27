@@ -4,6 +4,7 @@
 
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 
 -- =====================================================
@@ -1132,114 +1133,245 @@ local Values = {
 	["Clown"] = 0.0015625,
 }
 
+-- =====================================================
+-- 2. GUI & GİRİŞ EKRANI OLUŞTURMA
+-- =====================================================
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "MM2ZeroStartTracker"
+screenGui.Name = "UguzHubIntro"
 screenGui.Parent = CoreGui
 screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-screenGui.DisplayOrder = 999
+screenGui.ResetOnSpawn = false
 
--- Sol üst şık açma/kapatma menü butonu
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 160, 0, 50)
-mainFrame.Position = UDim2.new(0.02, 0, 0.15, 0)
-mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-mainFrame.BorderSizePixel = 0
-mainFrame.Active = true
-mainFrame.Draggable = true
-mainFrame.Parent = screenGui
+-- Ana Arka Plan (Tam Siyah)
+local bgFrame = Instance.new("Frame")
+bgFrame.Name = "Background"
+bgFrame.Size = UDim2.new(1, 0, 1, 0)
+bgFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+bgFrame.BorderSizePixel = 0
+bgFrame.Parent = screenGui
 
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 8)
-corner.Parent = mainFrame
+-- UguzHub Başlığı (Mavi)
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(0, 400, 0, 60)
+titleLabel.Position = UDim2.new(0.5, -200, 0.15, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "UguzHub"
+titleLabel.TextColor3 = Color3.fromRGB(0, 162, 255)
+titleLabel.TextSize = 42
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.Parent = bgFrame
 
-local toggleBtn = Instance.new("TextButton")
-toggleBtn.Size = UDim2.new(1, 0, 1, 0)
-toggleBtn.BackgroundTransparency = 1
-toggleBtn.Text = "Value Menu: AÇIK"
-toggleBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
-toggleBtn.TextSize = 13
-toggleBtn.Font = Enum.Font.GothamBold
-toggleBtn.Parent = mainFrame
+-- Üst Bilgi: Cihazınızı Seçiniz (İngilizce)
+local selectLabel = Instance.new("TextLabel")
+selectLabel.Size = UDim2.new(0, 400, 0, 30)
+selectLabel.Position = UDim2.new(0.5, -200, 0.28, 0)
+selectLabel.BackgroundTransparency = 1
+selectLabel.Text = "Please Select Your Device"
+selectLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+selectLabel.TextSize = 18
+selectLabel.Font = Enum.Font.GothamMedium
+selectLabel.Parent = bgFrame
 
+-- Seçim Kutuları Konteynerı
+local boxesContainer = Instance.new("Frame")
+boxesContainer.Size = UDim2.new(0, 520, 0, 220)
+boxesContainer.Position = UDim2.new(0.5, -260, 0.38, 0)
+boxesContainer.BackgroundTransparency = 1
+boxesContainer.Parent = bgFrame
+
+-- SOL KUTU (Mobile)
+local mobileBox = Instance.new("TextButton")
+mobileBox.Name = "MobileBox"
+mobileBox.Size = UDim2.new(0, 240, 0, 200)
+mobileBox.Position = UDim2.new(0, 0, 0, 10)
+mobileBox.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+mobileBox.BackgroundTransparency = 0.3
+mobileBox.BorderSizePixel = 0
+mobileBox.AutoButtonColor = true
+mobileBox.Text = ""
+mobileBox.Parent = boxesContainer
+
+local mobileCorner = Instance.new("UICorner")
+mobileCorner.CornerRadius = UDim.new(0, 16)
+mobileCorner.Parent = mobileBox
+
+-- Mobil İkon (rbxassetid://2802466063)
+local mobileIcon = Instance.new("ImageLabel")
+mobileIcon.Size = UDim2.new(0, 64, 0, 64)
+mobileIcon.Position = UDim2.new(0.5, -32, 0.3, -32)
+mobileIcon.BackgroundTransparency = 1
+mobileIcon.Image = "rbxassetid://2802466063"
+mobileIcon.Parent = mobileBox
+
+-- Mobil Yazı
+local mobileText = Instance.new("TextLabel")
+mobileText.Size = UDim2.new(1, 0, 0, 30)
+mobileText.Position = UDim2.new(0, 0, 0.7, 0)
+mobileText.BackgroundTransparency = 1
+mobileText.Text = "Mobile"
+mobileText.TextColor3 = Color3.fromRGB(255, 255, 255)
+mobileText.TextSize = 18
+mobileText.Font = Enum.Font.GothamBold
+mobileText.Parent = mobileBox
+
+
+-- SAĞ KUTU (Pc & Tablet)
+local pcBox = Instance.new("Frame")
+pcBox.Name = "PcBox"
+pcBox.Size = UDim2.new(0, 240, 0, 200)
+pcBox.Position = UDim2.new(1, -240, 0, 10)
+pcBox.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+pcBox.BackgroundTransparency = 0.5 -- Sağ taraf pasif/coming soon olduğu için biraz daha soluk
+pcBox.BorderSizePixel = 0
+pcBox.Parent = boxesContainer
+
+local pcCorner = Instance.new("UICorner")
+pcCorner.CornerRadius = UDim.new(0, 16)
+pcCorner.Parent = pcBox
+
+-- Sağ Üst Coming Soon (Pc & Tablet üstü)
+local pcComingSoon = Instance.new("TextLabel")
+pcComingSoon.Size = UDim2.new(1, 0, 0, 24)
+pcComingSoon.Position = UDim2.new(0, 0, 0.08, 0)
+pcComingSoon.BackgroundTransparency = 1
+pcComingSoon.Text = "COMING SOON"
+pcComingSoon.TextColor3 = Color3.fromRGB(255, 170, 0)
+pcComingSoon.TextSize = 13
+pcComingSoon.Font = Enum.Font.GothamBold
+pcComingSoon.Parent = pcBox
+
+-- PC İkon (rbxassetid://110032134344221)
+local pcIcon = Instance.new("ImageLabel")
+pcIcon.Size = UDim2.new(0, 64, 0, 64)
+pcIcon.Position = UDim2.new(0.5, -32, 0.35, -32)
+pcIcon.BackgroundTransparency = 1
+pcIcon.Image = "rbxassetid://110032134344221"
+pcIcon.Parent = pcBox
+
+-- PC Yazı
+local pcText = Instance.new("TextLabel")
+pcText.Size = UDim2.new(1, 0, 0, 30)
+pcText.Position = UDim2.new(0, 0, 0.7, 0)
+pcText.BackgroundTransparency = 1
+pcText.Text = "Pc & Tablet"
+pcText.TextColor3 = Color3.fromRGB(180, 180, 180)
+pcText.TextSize = 16
+pcText.Font = Enum.Font.GothamBold
+pcText.Parent = pcBox
+
+
+-- =====================================================
+-- 3. BİLDİRİM ÇUBUĞU FONKSİYONU VE ANİMASYONLAR
+-- =====================================================
+local function triggerNotificationBar()
+	-- Sağ altta bildirim çubuğu (başlangıçta ekranın dışında sağda konumlanır)
+	local notifFrame = Instance.new("Frame")
+	notifFrame.Size = UDim2.new(0, 310, 0, 50)
+	notifFrame.Position = UDim2.new(1, 350, 0.88, 0) -- Ekran dışı sağ
+	notifFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+	notifFrame.BackgroundTransparency = 0.15
+	notifFrame.BorderSizePixel = 0
+	notifFrame.Parent = screenGui
+
+	local notifCorner = Instance.new("UICorner")
+	notifCorner.CornerRadius = UDim.new(0, 10)
+	notifCorner.Parent = notifFrame
+
+	-- Yeşil Nokta
+	local greenDot = Instance.new("Frame")
+	greenDot.Size = UDim2.new(0, 10, 0, 10)
+	greenDot.Position = UDim2.new(0, 15, 0.5, -5)
+	greenDot.BackgroundColor3 = Color3.fromRGB(0, 255, 100)
+	greenDot.BorderSizePixel = 0
+	greenDot.Parent = notifFrame
+
+	local dotCorner = Instance.new("UICorner")
+	dotCorner.CornerRadius = UDim.new(1, 0)
+	dotCorner.Parent = greenDot
+
+	-- Metin: Value Calculator Şuanda Aktif !
+	local notifText = Instance.new("TextLabel")
+	notifText.Size = UDim2.new(0, 190, 1, 0)
+	notifText.Position = UDim2.new(0, 32, 0, 0)
+	notifText.BackgroundTransparency = 1
+	notifText.Text = "Value Calculator Aktif !"
+	notifText.TextColor3 = Color3.fromRGB(255, 255, 255)
+	notifText.TextSize = 13
+	notifText.Font = Enum.Font.GothamBold
+	notifText.TextXAlignment = Enum.TextXAlignment.Left
+	notifText.Parent = notifFrame
+
+	-- Sayaç Çubuğu (------• mantığıyla 25 saniye)
+	local timerLabel = Instance.new("TextLabel")
+	timerLabel.Size = UDim2.new(0, 80, 1, 0)
+	timerLabel.Position = UDim2.new(1, -85, 0, 0)
+	timerLabel.BackgroundTransparency = 1
+	timerLabel.Text = "------•"
+	timerLabel.TextColor3 = Color3.fromRGB(0, 162, 255)
+	timerLabel.TextSize = 14
+	timerLabel.Font = Enum.Font.GothamBold
+	timerLabel.TextXAlignment = Enum.TextXAlignment.Right
+	timerLabel.Parent = notifFrame
+
+	-- Çubuğu ekrana kaydırarak getir (Slide-in)
+	notifFrame:TweenPosition(UDim2.new(1, -330, 0.88, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
+
+	-- 25 Saniyelik Geri Sayım Döngüsü (------• Mantığı)
+	task.spawn(function()
+		local steps = {"------•", "-----•", "----•", "---•", "--•", "-•", "•"}
+		local totalDuration = 25
+		local interval = totalDuration / #steps
+		
+		for i, stepText in ipairs(steps) do
+			timerLabel.Text = stepText
+			if i < #steps then
+				task.wait(interval)
+			end
+		end
+		
+		-- Süre bitince sağa doğru geri gidip kaybolsun
+		notifFrame:TweenPosition(UDim2.new(1, 350, 0.88, 0), Enum.EasingDirection.In, Enum.EasingStyle.Quad, 0.5, true)
+		task.wait(0.6)
+		notifFrame:Destroy()
+	end)
+end
+
+-- Mobil Butona Tıklama Olayı (Ekran yavaşça silinir ve bildirim gelir)
+mobileBox.MouseButton1Click:Connect(function()
+	mobileBox.Active = false -- Çift tıklamayı engelle
+	
+	-- Ekranı yavaş yavaş karartma / silme animasyonu
+	local fadeTween = TweenService:Create(bgFrame, TweenInfo.new(1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1})
+	
+	-- Diğer elementleri de beraber yok et
+	TweenService:Create(titleLabel, TweenInfo.new(1), {TextTransparency = 1}):Play()
+	TweenService:Create(selectLabel, TweenInfo.new(1), {TextTransparency = 1}):Play()
+	TweenService:Create(mobileBox, TweenInfo.new(1), {BackgroundTransparency = 1}):Play()
+	TweenService:Create(mobileIcon, TweenInfo.new(1), {ImageTransparency = 1}):Play()
+	TweenService:Create(mobileText, TweenInfo.new(1), {TextTransparency = 1}):Play()
+	TweenService:Create(pcBox, TweenInfo.new(1), {BackgroundTransparency = 1}):Play()
+	TweenService:Create(pcComingSoon, TweenInfo.new(1), {TextTransparency = 1}):Play()
+	TweenService:Create(pcIcon, TweenInfo.new(1), {ImageTransparency = 1}):Play()
+	TweenService:Create(pcText, TweenInfo.new(1), {TextTransparency = 1}):Play()
+	
+	fadeTween:Play()
+	fadeTween.Completed:Wait()
+	
+	-- Giriş ekranını tamamen kaldır
+	bgFrame:Destroy()
+	
+	-- Sağ alttaki animasyonlu bildirim çubuğunu tetikle
+	triggerNotificationBar()
+end)
+
+-- =====================================================
+-- 4. TRADE VALUE SCRAPER (CORE ENGINE - DOKUNULMADI)
+-- =====================================================
 local scriptEnabled = true
-
-toggleBtn.MouseButton1Click:Connect(function()
-	scriptEnabled = not scriptEnabled
-	if scriptEnabled then
-		toggleBtn.Text = "Value Menu: AÇIK"
-		toggleBtn.TextColor3 = Color3.fromRGB(0, 255, 100)
-	else
-		toggleBtn.Text = "Value Menu: KAPALI"
-		toggleBtn.TextColor3 = Color3.fromRGB(255, 60, 60)
-	end
-end)
-
--- Küçük, hareket ettirilebilir aç/kapa butonu (paneli tamamen gizler/gösterir)
-local MINIMIZE_ICON_OPEN = "rbxassetid://15037279415"
-local MINIMIZE_ICON_CLOSED = "rbxassetid://15037279415"
-
-local minimizeBtn = Instance.new("ImageButton")
-minimizeBtn.Size = UDim2.new(0, 34, 0, 34)
-minimizeBtn.Position = UDim2.new(0.02, 0, 0.15, 60)
-minimizeBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-minimizeBtn.BorderSizePixel = 0
-minimizeBtn.Image = MINIMIZE_ICON_OPEN
-minimizeBtn.ScaleType = Enum.ScaleType.Fit
-minimizeBtn.Active = true
-minimizeBtn.Draggable = true
-minimizeBtn.Parent = screenGui
-
-local minimizeCorner = Instance.new("UICorner")
-minimizeCorner.CornerRadius = UDim.new(1, 0)
-minimizeCorner.Parent = minimizeBtn
-
-minimizeBtn.MouseButton1Click:Connect(function()
-	mainFrame.Visible = not mainFrame.Visible
-	minimizeBtn.Image = mainFrame.Visible and MINIMIZE_ICON_OPEN or MINIMIZE_ICON_CLOSED
-end)
 
 local function round(val, decimal)
 	local mult = 10^(decimal or 0)
 	return math.floor(val * mult + 0.5) / mult
-end
-
-local function isActuallyVisible(inst, root)
-	local current = inst
-	while current and current ~= root do
-		if current:IsA("GuiObject") and not current.Visible then
-			return false
-		end
-		current = current.Parent
-	end
-	return true
-end
-
-local function getOrCreateHeaderTotal(gui, headerText)
-	for _, d in ipairs(gui:GetDescendants()) do
-		if d:IsA("TextLabel") and d.Text:upper():find(headerText) then
-			local existing = d:FindFirstChild("HeaderTotalTag")
-			if existing then
-				return d.Parent, existing
-			end
-
-			local tag = Instance.new("TextLabel")
-			tag.Name = "HeaderTotalTag"
-			tag.Size = UDim2.new(0, 160, 1, 0)
-			tag.Position = UDim2.new(1, 10, 0, 0)
-			tag.BackgroundTransparency = 1
-			tag.Text = "Toplam: 0"
-			tag.TextColor3 = Color3.fromRGB(0, 255, 100)
-			tag.TextStrokeTransparency = 0
-			tag.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-			tag.TextSize = 14
-			tag.TextXAlignment = Enum.TextXAlignment.Left
-			tag.Font = Enum.Font.GothamBold
-			tag.ZIndex = d.ZIndex + 5
-			tag.Parent = d
-			return d.Parent, tag
-		end
-	end
-	return nil, nil
 end
 
 task.spawn(function()
@@ -1249,19 +1381,10 @@ task.spawn(function()
 			local playerGui = player:FindFirstChild("PlayerGui")
 			if playerGui then
 				for _, gui in ipairs(playerGui:GetChildren()) do
-					if gui:IsA("ScreenGui") and gui.Enabled and (gui.Name:lower():find("trade") or gui.Name:lower():find("takas")) then
-						local yourOfferFrame, yourTotalTag = getOrCreateHeaderTotal(gui, "YOUR OFFER")
-						local theirOfferFrame, theirTotalTag = getOrCreateHeaderTotal(gui, "THEIR OFFER")
-						local yourTotal, theirTotal = 0, 0
-
+					if gui:IsA("ScreenGui") and (gui.Name:lower():find("trade") or gui.Name:lower():find("takas")) then
 						for _, desc in ipairs(gui:GetDescendants()) do
-							if desc:IsA("TextLabel") and desc.Text ~= "" and desc.Name ~= "HeaderTotalTag" and isActuallyVisible(desc, gui) then
+							if desc:IsA("TextLabel") and desc.Text ~= "" then
 								local rawText = desc.Text
-
-								if rawText:lower():find("live total value") then
-									desc.Visible = false
-								end
-
 								if not rawText:find("Val") then
 									local count = 1
 									local cleanName = rawText:match("^(.-)%s*x(%d+)$")
@@ -1272,11 +1395,11 @@ task.spawn(function()
 										cleanName = rawText:match("^(.-)%s*%(") or rawText
 										cleanName = cleanName:gsub("^%s*(.-)%s*$", "%1")
 									end
-
-									local baseVal = (cleanName ~= "" and Values[cleanName]) or nil
+									
+									local baseVal = Values[cleanName]
 									if baseVal then
 										local totalItemVal = baseVal * count
-
+										
 										if not desc:FindFirstChild("CleanTag") then
 											local tag = Instance.new("TextLabel")
 											tag.Name = "CleanTag"
@@ -1294,22 +1417,9 @@ task.spawn(function()
 										else
 											desc.CleanTag.Text = tostring(round(totalItemVal, 2)) .. " Val"
 										end
-
-										if yourOfferFrame and desc:IsDescendantOf(yourOfferFrame) then
-											yourTotal = yourTotal + totalItemVal
-										elseif theirOfferFrame and desc:IsDescendantOf(theirOfferFrame) then
-											theirTotal = theirTotal + totalItemVal
-										end
 									end
 								end
 							end
-						end
-
-						if yourTotalTag then
-							yourTotalTag.Text = "Toplam: " .. tostring(round(yourTotal, 2))
-						end
-						if theirTotalTag then
-							theirTotalTag.Text = "Toplam: " .. tostring(round(theirTotal, 2))
 						end
 					end
 				end
