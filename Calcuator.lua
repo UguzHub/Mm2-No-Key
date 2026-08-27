@@ -1249,53 +1249,138 @@ local function createDeviceBox(xPos, iconId, caption)
     label.Size = UDim2.new(1, 0, 0, 26)
     label.Position = UDim2.new(0, 0, 0.72, 0)
     label.BackgroundTransparency = 1
-    label.Text = caption
-    label.TextColor3 = Color3.fromRGB(235, 235, 235)
-    label.Font = Enum.Font.GothamBold
-    label.TextSize = 18
-    label.ZIndex = 12
-    label.Parent = box
 
-    return box
+	-- =====================================================
+-- 2. GİRİŞ EKRANI (CİHAZ SEÇİMİ) - DÜZENLENDİ
+-- =====================================================
+local splash = Instance.new("Frame")
+splash.Name = "Splash"
+splash.Size = UDim2.new(1, 0, 1, 0)
+splash.Position = UDim2.new(0, 0, 0, 0)
+splash.BackgroundColor3 = Color3.fromRGB(10, 20, 45)
+splash.BackgroundTransparency = 0
+splash.BorderSizePixel = 0
+splash.ZIndex = 10
+splash.Parent = screenGui
+
+local title = Instance.new("TextLabel")
+title.Name = "Title"
+title.Size = UDim2.new(0, 400, 0, 60)
+title.Position = UDim2.new(0.5, -200, 0.10, 0)
+title.BackgroundTransparency = 1
+title.Text = "UGUZHUB"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBlack
+title.TextSize = 48
+title.ZIndex = 11
+title.Parent = splash
+
+local titleAccent = Instance.new("TextLabel")
+titleAccent.Name = "TitleAccent"
+titleAccent.Size = UDim2.new(0, 120, 0, 60)
+titleAccent.Position = UDim2.new(0.5, 90, 0.10, 0)
+titleAccent.BackgroundTransparency = 1
+titleAccent.Text = "HUB"
+titleAccent.TextColor3 = Color3.fromRGB(60, 140, 255)
+titleAccent.Font = Enum.Font.GothamBlack
+titleAccent.TextSize = 48
+titleAccent.ZIndex = 12
+titleAccent.Parent = splash
+
+local subtitle = Instance.new("TextLabel")
+subtitle.Name = "Subtitle"
+subtitle.Size = UDim2.new(0, 500, 0, 30)
+subtitle.Position = UDim2.new(0.5, -250, 0.20, 0)
+subtitle.BackgroundTransparency = 1
+subtitle.Text = "SELECT YOUR DEVICE"
+subtitle.TextColor3 = Color3.fromRGB(180, 190, 210)
+subtitle.Font = Enum.Font.GothamBold
+subtitle.TextSize = 16
+subtitle.ZIndex = 11
+subtitle.Parent = splash
+
+local function createDeviceBox(xPos, iconEmoji, caption)
+	local box = Instance.new("TextButton")
+	box.Size = UDim2.new(0, 140, 0, 160)
+	box.Position = UDim2.new(xPos, 0, 0.38, 0)
+	box.AnchorPoint = Vector2.new(0.5, 0)
+	box.BackgroundColor3 = Color3.fromRGB(25, 35, 60)
+	box.AutoButtonColor = false
+	box.Text = ""
+	box.ZIndex = 11
+	box.Parent = splash
+
+	local boxCorner = Instance.new("UICorner")
+	boxCorner.CornerRadius = UDim.new(0, 14)
+	boxCorner.Parent = box
+
+	local boxStroke = Instance.new("UIStroke")
+	boxStroke.Color = Color3.fromRGB(80, 120, 200)
+	boxStroke.Thickness = 1.5
+	boxStroke.Parent = box
+
+	local icon = Instance.new("TextLabel")
+	icon.Name = "Icon"
+	icon.Size = UDim2.new(0, 60, 0, 60)
+	icon.Position = UDim2.new(0.5, -30, 0.12, 0)
+	icon.BackgroundTransparency = 1
+	icon.Text = iconEmoji
+	icon.TextColor3 = Color3.fromRGB(255, 255, 255)
+	icon.Font = Enum.Font.GothamBlack
+	icon.TextSize = 55
+	icon.TextScaled = true
+	icon.ZIndex = 12
+	icon.Parent = box
+
+	local label = Instance.new("TextLabel")
+	label.Name = "Caption"
+	label.Size = UDim2.new(1, 0, 0, 24)
+	label.Position = UDim2.new(0, 0, 0.72, 0)
+	label.BackgroundTransparency = 1
+	label.Text = caption
+	label.TextColor3 = Color3.fromRGB(220, 230, 255)
+	label.Font = Enum.Font.GothamBold
+	label.TextSize = 15
+	label.ZIndex = 12
+	label.Parent = box
+
+	return box
 end
 
-local mobileBox = createDeviceBox(0.33, "14040313905", "Mobile")
-local pcBox = createDeviceBox(0.67, "12684119292", "Pc & Tablet")
+local mobileBox = createDeviceBox(0.35, "📱", "MOBILE")
+local pcBox = createDeviceBox(0.65, "🖥️", "PC & TABLET")
 
--- Hover efekti (sadece mobil için, seçilebilir olduğu belli olsun)
-mobileBox.MouseEnter:Connect(function()
-	TweenService:Create(mobileBox, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(28, 28, 34)}):Play()
-end)
-mobileBox.MouseLeave:Connect(function()
-	TweenService:Create(mobileBox, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(20, 20, 24)}):Play()
-end)
-
--- "Coming Soon" saydam örtüsü (Pc & Tablet kutusunun üstüne)
 local comingSoonOverlay = Instance.new("Frame")
 comingSoonOverlay.Size = UDim2.new(1, 0, 1, 0)
-comingSoonOverlay.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-comingSoonOverlay.BackgroundTransparency = 0.85
+comingSoonOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+comingSoonOverlay.BackgroundTransparency = 0.6
 comingSoonOverlay.ZIndex = 13
 comingSoonOverlay.Parent = pcBox
 
 local comingSoonCorner = Instance.new("UICorner")
-comingSoonCorner.CornerRadius = UDim.new(0, 18)
+comingSoonCorner.CornerRadius = UDim.new(0, 14)
 comingSoonCorner.Parent = comingSoonOverlay
 
 local comingSoonText = Instance.new("TextLabel")
-comingSoonText.Size = UDim2.new(1, 0, 0, 26)
-comingSoonText.Position = UDim2.new(0, 0, 0.02, 0)
+comingSoonText.Size = UDim2.new(1, 0, 0, 28)
+comingSoonText.Position = UDim2.new(0, 0, 0.38, 0)
 comingSoonText.BackgroundTransparency = 1
 comingSoonText.Text = "COMING SOON"
-comingSoonText.TextColor3 = Color3.fromRGB(30, 30, 30)
+comingSoonText.TextColor3 = Color3.fromRGB(255, 255, 255)
 comingSoonText.Font = Enum.Font.GothamBlack
-comingSoonText.TextSize = 13
+comingSoonText.TextSize = 18
 comingSoonText.ZIndex = 14
 comingSoonText.Parent = comingSoonOverlay
 
 pcBox.Active = false
 pcBox.AutoButtonColor = false
 
+mobileBox.MouseEnter:Connect(function()
+	TweenService:Create(mobileBox, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 55, 90)}):Play()
+end)
+mobileBox.MouseLeave:Connect(function()
+	TweenService:Create(mobileBox, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(25, 35, 60)}):Play()
+end)
 -- =====================================================
 -- 3. GEÇİŞ ANİMASYONU (Mobil seçilince ekran yavaşça silinir)
 -- =====================================================
