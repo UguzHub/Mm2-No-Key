@@ -1131,7 +1131,6 @@ local Values = {
 	["Yellow"] = 0.002,
 	["Clown"] = 0.0015625,
 }
-
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "MM2ZeroStartTracker"
 screenGui.Parent = CoreGui
@@ -1173,9 +1172,48 @@ toggleBtn.MouseButton1Click:Connect(function()
 	end
 end)
 
+-- Küçük, hareket ettirilebilir aç/kapa butonu (paneli tamamen gizler/gösterir)
+-- Buton simgesi olarak kendi Roblox image asset ID'ni buraya yaz (rbxassetid://XXXXXXXXX)
+local MINIMIZE_ICON_OPEN = "rbxassetid://15037279415"   -- panel açıkken gösterilecek ikon
+local MINIMIZE_ICON_CLOSED = "rbxassetid://15037279415" -- panel kapalıyken gösterilecek ikon
+
+local minimizeBtn = Instance.new("ImageButton")
+minimizeBtn.Size = UDim2.new(0, 34, 0, 34)
+minimizeBtn.Position = UDim2.new(0.02, 0, 0.08, 0)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+minimizeBtn.BorderSizePixel = 0
+minimizeBtn.Image = MINIMIZE_ICON_OPEN
+minimizeBtn.ScaleType = Enum.ScaleType.Fit
+minimizeBtn.Active = true
+minimizeBtn.Draggable = true
+minimizeBtn.Parent = screenGui
+
+local minimizeCorner = Instance.new("UICorner")
+minimizeCorner.CornerRadius = UDim.new(1, 0)
+minimizeCorner.Parent = minimizeBtn
+
+minimizeBtn.MouseButton1Click:Connect(function()
+	mainFrame.Visible = not mainFrame.Visible
+	minimizeBtn.Image = mainFrame.Visible and MINIMIZE_ICON_OPEN or MINIMIZE_ICON_CLOSED
+end)
+
 local function round(val, decimal)
 	local mult = 10^(decimal or 0)
 	return math.floor(val * mult + 0.5) / mult
+end
+
+-- Bir eleman gerçekten görünür mü kontrol eder (kendisi VE tüm üst frame'leri Visible olmalı).
+-- Oyun bir eşyayı çekince slotu genelde Visible=false yapıp text'i temizlemiyor;
+-- bu kontrol olmadan script o eski/gizli slotu saymaya devam ediyordu.
+local function isActuallyVisible(inst, root)
+	local current = inst
+	while current and current ~= root do
+		if current:IsA("GuiObject") and not current.Visible then
+			return false
+		end
+		current = current.Parent
+	end
+	return true
 end
 
 -- "YOUR OFFER" / "THEIR OFFER" başlığını bulur ve o başlığa gömülü bir toplam etiketi ekler
@@ -1216,13 +1254,13 @@ task.spawn(function()
 			local playerGui = player:FindFirstChild("PlayerGui")
 			if playerGui then
 				for _, gui in ipairs(playerGui:GetChildren()) do
-					if gui:IsA("ScreenGui") and (gui.Name:lower():find("trade") or gui.Name:lower():find("takas")) then
+					if gui:IsA("ScreenGui") and gui.Enabled and (gui.Name:lower():find("trade") or gui.Name:lower():find("takas")) then
 						local yourOfferFrame, yourTotalTag = getOrCreateHeaderTotal(gui, "YOUR OFFER")
 						local theirOfferFrame, theirTotalTag = getOrCreateHeaderTotal(gui, "THEIR OFFER")
 						local yourTotal, theirTotal = 0, 0
 
 						for _, desc in ipairs(gui:GetDescendants()) do
-							if desc:IsA("TextLabel") and desc.Text ~= "" and desc.Name ~= "HeaderTotalTag" then
+							if desc:IsA("TextLabel") and desc.Text ~= "" and desc.Name ~= "HeaderTotalTag" and isActuallyVisible(desc, gui) then
 								local rawText = desc.Text
 
 								-- Oyunun kendi bozuk "Live Total Value" yazısını gizle
