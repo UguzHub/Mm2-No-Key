@@ -1159,6 +1159,7 @@ end
 -- =====================================================
 -- 2. GİRİŞ EKRANI (CAM GÖRÜNÜMLÜ CİHAZ SEÇİMİ)
 -- =====================================================
+
 local dim = Instance.new("Frame")
 dim.Name = "Dim"
 dim.Size = UDim2.new(1, 0, 1, 0)
@@ -1171,7 +1172,7 @@ dim.Parent = screenGui
 local panel = Instance.new("Frame")
 panel.Name = "Panel"
 panel.AnchorPoint = Vector2.new(0.5, 0.5)
-panel.Size = UDim2.new(0.55, 0, 0.62, 0)
+panel.Size = UDim2.new(0.42, 0, 0.5, 0)
 panel.Position = UDim2.new(0.5, 0, 0.5, 0)
 panel.BackgroundColor3 = Color3.fromRGB(18, 26, 40)
 panel.BackgroundTransparency = 0.15
@@ -1180,8 +1181,8 @@ panel.ZIndex = 11
 panel.Parent = screenGui
 
 local panelConstraint = Instance.new("UISizeConstraint")
-panelConstraint.MinSize = Vector2.new(380, 320)
-panelConstraint.MaxSize = Vector2.new(620, 430)
+panelConstraint.MinSize = Vector2.new(320, 280)
+panelConstraint.MaxSize = Vector2.new(480, 360)
 panelConstraint.Parent = panel
 
 local panelCorner = Instance.new("UICorner")
@@ -1209,7 +1210,7 @@ kicker.BackgroundTransparency = 1
 kicker.Text = "DEVICE TYPE"
 kicker.TextColor3 = Color3.fromRGB(140, 155, 180)
 kicker.Font = Enum.Font.GothamBold
-kicker.TextSize = 13
+kicker.TextSize = 11
 kicker.ZIndex = 12
 kicker.Parent = panel
 
@@ -1220,13 +1221,13 @@ heading.BackgroundTransparency = 1
 heading.Text = "SELECT YOUR DEVICE"
 heading.TextColor3 = Color3.fromRGB(255, 255, 255)
 heading.Font = Enum.Font.GothamBlack
-heading.TextSize = 30
+heading.TextSize = 24
 heading.ZIndex = 12
 heading.Parent = panel
 
 local badge = Instance.new("Frame")
 badge.AnchorPoint = Vector2.new(0.5, 0)
-badge.Size = UDim2.new(0, 128, 0, 26)
+badge.Size = UDim2.new(0, 108, 0, 22)
 badge.Position = UDim2.new(0.5, 0, 0.32, 0)
 badge.BackgroundColor3 = Color3.fromRGB(60, 140, 255)
 badge.BorderSizePixel = 0
@@ -1251,7 +1252,7 @@ badgeText.BackgroundTransparency = 1
 badgeText.Text = "UGUZHUB"
 badgeText.TextColor3 = Color3.fromRGB(255, 255, 255)
 badgeText.Font = Enum.Font.GothamBlack
-badgeText.TextSize = 13
+badgeText.TextSize = 11
 badgeText.ZIndex = 13
 badgeText.Parent = badge
 
@@ -1261,7 +1262,7 @@ badgeText.Parent = badge
 local function drawPhoneIcon(parent)
 	local holder = Instance.new("Frame")
 	holder.AnchorPoint = Vector2.new(0.5, 0.5)
-	holder.Size = UDim2.new(0, 100, 0, 100)
+	holder.Size = UDim2.new(0, 76, 0, 76)
 	holder.Position = UDim2.new(0.5, 0, 0.42, 0)
 	holder.BackgroundTransparency = 1
 	holder.ZIndex = 13
@@ -1269,7 +1270,7 @@ local function drawPhoneIcon(parent)
 
 	local body = Instance.new("Frame")
 	body.AnchorPoint = Vector2.new(0.5, 0.5)
-	body.Size = UDim2.new(0, 46, 0, 82)
+	body.Size = UDim2.new(0, 35, 0, 62)
 	body.Position = UDim2.new(0.5, 0, 0.5, 0)
 	body.BackgroundTransparency = 1
 	body.ZIndex = 13
@@ -1303,7 +1304,7 @@ end
 local function drawPcTabletIcon(parent)
 	local holder = Instance.new("Frame")
 	holder.AnchorPoint = Vector2.new(0.5, 0.5)
-	holder.Size = UDim2.new(0, 100, 0, 100)
+	holder.Size = UDim2.new(0, 76, 0, 76)
 	holder.Position = UDim2.new(0.5, 0, 0.42, 0)
 	holder.BackgroundTransparency = 1
 	holder.ZIndex = 13
@@ -1311,24 +1312,24 @@ local function drawPcTabletIcon(parent)
 
 	local monitor = Instance.new("Frame")
 	monitor.AnchorPoint = Vector2.new(0.5, 0.5)
-	monitor.Size = UDim2.new(0, 68, 0, 46)
+	monitor.Size = UDim2.new(0, 52, 0, 35)
 	monitor.Position = UDim2.new(0.42, 0, 0.4, 0)
 	monitor.BackgroundTransparency = 1
 	monitor.ZIndex = 13
 	monitor.Parent = holder
 
 	local monitorCorner = Instance.new("UICorner")
-	monitorCorner.CornerRadius = UDim.new(0, 6)
+	monitorCorner.CornerRadius = UDim.new(0, 5)
 	monitorCorner.Parent = monitor
 
 	local monitorStroke = Instance.new("UIStroke")
 	monitorStroke.Color = Color3.fromRGB(230, 235, 245)
-	monitorStroke.Thickness = 3
+	monitorStroke.Thickness = 2.5
 	monitorStroke.Parent = monitor
 
 	local stand = Instance.new("Frame")
 	stand.AnchorPoint = Vector2.new(0.5, 0)
-	stand.Size = UDim2.new(0, 22, 0, 8)
+	stand.Size = UDim2.new(0, 17, 0, 6)
 	stand.Position = UDim2.new(0.42, 0, 0.635, 0)
 	stand.BackgroundColor3 = Color3.fromRGB(230, 235, 245)
 	stand.BorderSizePixel = 0
@@ -1341,7 +1342,7 @@ local function drawPcTabletIcon(parent)
 
 	local tablet = Instance.new("Frame")
 	tablet.AnchorPoint = Vector2.new(0.5, 0.5)
-	tablet.Size = UDim2.new(0, 32, 0, 46)
+	tablet.Size = UDim2.new(0, 24, 0, 35)
 	tablet.Position = UDim2.new(0.72, 0, 0.58, 0)
 	tablet.BackgroundColor3 = Color3.fromRGB(18, 26, 40)
 	tablet.BackgroundTransparency = 0.1
@@ -1350,12 +1351,12 @@ local function drawPcTabletIcon(parent)
 	tablet.Parent = holder
 
 	local tabletCorner = Instance.new("UICorner")
-	tabletCorner.CornerRadius = UDim.new(0, 6)
+	tabletCorner.CornerRadius = UDim.new(0, 5)
 	tabletCorner.Parent = tablet
 
 	local tabletStroke = Instance.new("UIStroke")
 	tabletStroke.Color = Color3.fromRGB(230, 235, 245)
-	tabletStroke.Thickness = 3
+	tabletStroke.Thickness = 2.5
 	tabletStroke.Parent = tablet
 
 	return holder
@@ -1395,7 +1396,7 @@ local function createCard(xPos, title)
 	cardTitle.Text = title
 	cardTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 	cardTitle.Font = Enum.Font.GothamBlack
-	cardTitle.TextSize = 18
+	cardTitle.TextSize = 14
 	cardTitle.ZIndex = 13
 	cardTitle.Parent = card
 
@@ -1419,11 +1420,12 @@ mobileCard.MouseLeave:Connect(function()
 end)
 
 -- "COMING SOON" çapraz şerit (PC & Tablet kartının üstünde)
+-- Açı ve uzunluk kartın gerçek piksel boyutuna göre hesaplanıyor,
+-- böylece her cihazda tam sağ üst köşeden sol alt köşeye gider, yamuk durmaz.
 local ribbon = Instance.new("Frame")
 ribbon.AnchorPoint = Vector2.new(0.5, 0.5)
-ribbon.Size = UDim2.new(1.15, 0, 0, 30)
-ribbon.Position = UDim2.new(0.5, 0, 0.6, 0)
-ribbon.Rotation = -28
+ribbon.Size = UDim2.new(0, 200, 0, 22)
+ribbon.Position = UDim2.new(0.5, 0, 0.5, 0)
 ribbon.BackgroundColor3 = Color3.fromRGB(225, 230, 240)
 ribbon.BackgroundTransparency = 0.05
 ribbon.BorderSizePixel = 0
@@ -1436,9 +1438,22 @@ ribbonText.BackgroundTransparency = 1
 ribbonText.Text = "COMING SOON"
 ribbonText.TextColor3 = Color3.fromRGB(18, 26, 40)
 ribbonText.Font = Enum.Font.GothamBlack
-ribbonText.TextSize = 14
+ribbonText.TextSize = 12
 ribbonText.ZIndex = 16
 ribbonText.Parent = ribbon
+
+local function fitRibbonToCard()
+	local w, h = pcCard.AbsoluteSize.X, pcCard.AbsoluteSize.Y
+	if w > 0 and h > 0 then
+		local angle = -math.deg(math.atan(h / w))
+		local diagonal = math.sqrt(w * w + h * h)
+		ribbon.Rotation = angle
+		ribbon.Size = UDim2.new(0, diagonal * 0.96, 0, ribbon.Size.Y.Offset)
+	end
+end
+
+fitRibbonToCard()
+pcCard:GetPropertyChangedSignal("AbsoluteSize"):Connect(fitRibbonToCard)
 
 -- Şerit kutunun dışına asla taşmasın
 pcCard.ClipsDescendants = true
