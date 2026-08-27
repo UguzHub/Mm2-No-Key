@@ -1175,9 +1175,8 @@ toggleBtn.MouseButton1Click:Connect(function()
 end)
 
 -- Küçük, hareket ettirilebilir aç/kapa butonu (paneli tamamen gizler/gösterir)
--- Buton simgesi olarak kendi Roblox image asset ID'ni buraya yaz (rbxassetid://XXXXXXXXX)
-local MINIMIZE_ICON_OPEN = "rbxassetid://15037279415"   -- panel açıkken gösterilecek ikon
-local MINIMIZE_ICON_CLOSED = "rbxassetid://15037279415" -- panel kapalıyken gösterilecek ikon
+local MINIMIZE_ICON_OPEN = "rbxassetid://15037279415"
+local MINIMIZE_ICON_CLOSED = "rbxassetid://15037279415"
 
 local minimizeBtn = Instance.new("ImageButton")
 minimizeBtn.Size = UDim2.new(0, 34, 0, 34)
@@ -1204,9 +1203,6 @@ local function round(val, decimal)
 	return math.floor(val * mult + 0.5) / mult
 end
 
--- Bir eleman gerçekten görünür mü kontrol eder (kendisi VE tüm üst frame'leri Visible olmalı).
--- Oyun bir eşyayı çekince slotu genelde Visible=false yapıp text'i temizlemiyor;
--- bu kontrol olmadan script o eski/gizli slotu saymaya devam ediyordu.
 local function isActuallyVisible(inst, root)
 	local current = inst
 	while current and current ~= root do
@@ -1218,9 +1214,6 @@ local function isActuallyVisible(inst, root)
 	return true
 end
 
--- "YOUR OFFER" / "THEIR OFFER" başlığını bulur ve o başlığa gömülü bir toplam etiketi ekler
--- (Bu ekstra bir menü DEĞİL, oyunun kendi trade arayüzünün bir parçası olarak eklenir.
---  Trade kapanınca bu etiketler de kapanır, ayrı bir pencere/kutu yoktur.)
 local function getOrCreateHeaderTotal(gui, headerText)
 	for _, d in ipairs(gui:GetDescendants()) do
 		if d:IsA("TextLabel") and d.Text:upper():find(headerText) then
@@ -1265,12 +1258,10 @@ task.spawn(function()
 							if desc:IsA("TextLabel") and desc.Text ~= "" and desc.Name ~= "HeaderTotalTag" and isActuallyVisible(desc, gui) then
 								local rawText = desc.Text
 
-								-- Oyunun kendi bozuk "Live Total Value" yazısını gizle
 								if rawText:lower():find("live total value") then
 									desc.Visible = false
 								end
 
-								-- Oyunun kendi saçma 0.4 veya varsayılan etiketlerini işleme alma
 								if not rawText:find("Val") then
 									local count = 1
 									local cleanName = rawText:match("^(.-)%s*x(%d+)$")
@@ -1286,7 +1277,6 @@ task.spawn(function()
 									if baseVal then
 										local totalItemVal = baseVal * count
 
-										-- Eğer daha önce etiket eklenmemişse sıfırdan oluştur
 										if not desc:FindFirstChild("CleanTag") then
 											local tag = Instance.new("TextLabel")
 											tag.Name = "CleanTag"
@@ -1302,11 +1292,9 @@ task.spawn(function()
                                             tag.ZIndex = desc.ZIndex + 5
 											tag.Parent = desc
 										else
-											-- Eşya sayısı veya türü değiştiğinde anlık güncelle
 											desc.CleanTag.Text = tostring(round(totalItemVal, 2)) .. " Val"
 										end
 
-										-- Hangi taraftaysa (senin teklifin / karşı taraf) o tarafın toplamına ekle
 										if yourOfferFrame and desc:IsDescendantOf(yourOfferFrame) then
 											yourTotal = yourTotal + totalItemVal
 										elseif theirOfferFrame and desc:IsDescendantOf(theirOfferFrame) then
