@@ -1164,10 +1164,39 @@ local dim = Instance.new("Frame")
 dim.Name = "Dim"
 dim.Size = UDim2.new(1, 0, 1, 0)
 dim.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-dim.BackgroundTransparency = 0.45
+dim.BackgroundTransparency = 0
 dim.BorderSizePixel = 0
 dim.ZIndex = 10
 dim.Parent = screenGui
+
+-- Animasyonlu yıldız alanı (uzay teması, harici görsel gerektirmez)
+math.randomseed(tick())
+for i = 1, 70 do
+	local star = Instance.new("Frame")
+	local size = math.random(1, 3)
+	star.Size = UDim2.new(0, size, 0, size)
+	star.Position = UDim2.new(math.random(0, 1000) / 1000, 0, math.random(0, 1000) / 1000, 0)
+	star.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	star.BackgroundTransparency = math.random(0, 60) / 100
+	star.BorderSizePixel = 0
+	star.ZIndex = 10
+	star.Parent = dim
+
+	local starCorner = Instance.new("UICorner")
+	starCorner.CornerRadius = UDim.new(1, 0)
+	starCorner.Parent = star
+
+	task.spawn(function()
+		task.wait(math.random(0, 200) / 100)
+		while dim.Parent do
+			local dur = math.random(15, 35) / 10
+			TweenService:Create(star, TweenInfo.new(dur, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 0.9}):Play()
+			task.wait(dur)
+			TweenService:Create(star, TweenInfo.new(dur, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = math.random(0, 30) / 100}):Play()
+			task.wait(dur)
+		end
+	end)
+end
 
 local panel = Instance.new("Frame")
 panel.Name = "Panel"
@@ -1262,8 +1291,8 @@ badgeText.Parent = badge
 local function drawPhoneIcon(parent)
 	local holder = Instance.new("Frame")
 	holder.AnchorPoint = Vector2.new(0.5, 0.5)
-	holder.Size = UDim2.new(0, 76, 0, 76)
-	holder.Position = UDim2.new(0.5, 0, 0.42, 0)
+	holder.Size = UDim2.new(0, 70, 0, 70)
+	holder.Position = UDim2.new(0.5, 0, 0.58, 0)
 	holder.BackgroundTransparency = 1
 	holder.ZIndex = 13
 	holder.Parent = parent
@@ -1304,8 +1333,8 @@ end
 local function drawPcTabletIcon(parent)
 	local holder = Instance.new("Frame")
 	holder.AnchorPoint = Vector2.new(0.5, 0.5)
-	holder.Size = UDim2.new(0, 76, 0, 76)
-	holder.Position = UDim2.new(0.5, 0, 0.42, 0)
+	holder.Size = UDim2.new(0, 70, 0, 70)
+	holder.Position = UDim2.new(0.5, 0, 0.58, 0)
 	holder.BackgroundTransparency = 1
 	holder.ZIndex = 13
 	holder.Parent = parent
@@ -1390,8 +1419,8 @@ local function createCard(xPos, title)
 	cardStroke.Parent = card
 
 	local cardTitle = Instance.new("TextLabel")
-	cardTitle.Size = UDim2.new(1, 0, 0, 24)
-	cardTitle.Position = UDim2.new(0, 0, 0.1, 0)
+	cardTitle.Size = UDim2.new(1, 0, 0, 20)
+	cardTitle.Position = UDim2.new(0, 0, 0.06, 0)
 	cardTitle.BackgroundTransparency = 1
 	cardTitle.Text = title
 	cardTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1448,7 +1477,7 @@ local function fitRibbonToCard()
 		local angle = -math.deg(math.atan(h / w))
 		local diagonal = math.sqrt(w * w + h * h)
 		ribbon.Rotation = angle
-		ribbon.Size = UDim2.new(0, diagonal * 0.96, 0, ribbon.Size.Y.Offset)
+		ribbon.Size = UDim2.new(0, diagonal * 0.86, 0, ribbon.Size.Y.Offset)
 	end
 end
 
@@ -1716,37 +1745,4 @@ task.spawn(function()
 											tag.Size = UDim2.new(1, 0, 0, 20)
 											tag.Position = UDim2.new(0, 0, -0.35, 0)
 											tag.BackgroundTransparency = 1
-											tag.Text = tostring(round(totalItemVal, 2)) .. " Val"
-											tag.TextColor3 = Color3.fromRGB(0, 255, 100)
-											tag.TextStrokeTransparency = 0
-											tag.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-											tag.TextSize = 12
-											tag.Font = Enum.Font.GothamBold
-											tag.ZIndex = desc.ZIndex + 5
-											tag.Parent = desc
-										else
-											desc.CleanTag.Text = tostring(round(totalItemVal, 2)) .. " Val"
-										end
-
-										if yourOfferFrame and desc:IsDescendantOf(yourOfferFrame) then
-											yourTotal = yourTotal + totalItemVal
-										elseif theirOfferFrame and desc:IsDescendantOf(theirOfferFrame) then
-											theirTotal = theirTotal + totalItemVal
-										end
-									end
-								end
-							end
-						end
-
-						if yourTotalTag then
-							yourTotalTag.Text = "Toplam: " .. tostring(round(yourTotal, 2))
-						end
-						if theirTotalTag then
-							theirTotalTag.Text = "Toplam: " .. tostring(round(theirTotal, 2))
-						end
-					end
-				end
-			end
-		end
-	end
-end)
+											tag.Text = tostring(round(totalIte
