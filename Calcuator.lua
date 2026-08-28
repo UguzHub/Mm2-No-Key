@@ -1745,4 +1745,37 @@ task.spawn(function()
 											tag.Size = UDim2.new(1, 0, 0, 20)
 											tag.Position = UDim2.new(0, 0, -0.35, 0)
 											tag.BackgroundTransparency = 1
-											tag.Text = tostring(round(totalIte
+											tag.Text = tostring(round(totalItemVal, 2)) .. " Val"
+											tag.TextColor3 = Color3.fromRGB(0, 255, 100)
+											tag.TextStrokeTransparency = 0
+											tag.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+											tag.TextSize = 12
+											tag.Font = Enum.Font.GothamBold
+											tag.ZIndex = desc.ZIndex + 5
+											tag.Parent = desc
+										else
+											desc.CleanTag.Text = tostring(round(totalItemVal, 2)) .. " Val"
+										end
+
+										if yourOfferFrame and desc:IsDescendantOf(yourOfferFrame) then
+											yourTotal = yourTotal + totalItemVal
+										elseif theirOfferFrame and desc:IsDescendantOf(theirOfferFrame) then
+											theirTotal = theirTotal + totalItemVal
+										end
+									end
+								end
+							end
+						end
+
+						if yourTotalTag then
+							yourTotalTag.Text = "Toplam: " .. tostring(round(yourTotal, 2))
+						end
+						if theirTotalTag then
+							theirTotalTag.Text = "Toplam: " .. tostring(round(theirTotal, 2))
+						end
+					end
+				end
+			end
+		end
+	end
+end)
