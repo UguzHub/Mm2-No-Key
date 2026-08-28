@@ -1131,7 +1131,7 @@ local Values = {
 	["Clown"] = 0.0015625,
 }
 
-local scriptEnabled = false
+												local scriptEnabled = false
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "UguzHub"
@@ -1156,10 +1156,6 @@ if not parented then
 	screenGui.Parent = player:WaitForChild("PlayerGui")
 end
 
--- =====================================================
--- 2. GİRİŞ EKRANI (CAM GÖRÜNÜMLÜ CİHAZ SEÇİMİ)
--- =====================================================
-
 local dim = Instance.new("Frame")
 dim.Name = "Dim"
 dim.Size = UDim2.new(1, 0, 1, 0)
@@ -1169,15 +1165,16 @@ dim.BorderSizePixel = 0
 dim.ZIndex = 10
 dim.Parent = screenGui
 
--- Animasyonlu yıldız alanı (uzay teması, harici görsel gerektirmez)
 math.randomseed(tick())
-for i = 1, 70 do
+for i = 1, 180 do
 	local star = Instance.new("Frame")
 	local size = math.random(1, 3)
 	star.Size = UDim2.new(0, size, 0, size)
-	star.Position = UDim2.new(math.random(0, 1000) / 1000, 0, math.random(0, 1000) / 1000, 0)
+	local startX = math.random(-1000, 1000) / 1000
+	local startY = math.random(-1000, 1000) / 1000
+	star.Position = UDim2.new(startX, 0, startY, 0)
 	star.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	star.BackgroundTransparency = math.random(0, 60) / 100
+	star.BackgroundTransparency = math.random(10, 60) / 100
 	star.BorderSizePixel = 0
 	star.ZIndex = 10
 	star.Parent = dim
@@ -1186,14 +1183,18 @@ for i = 1, 70 do
 	starCorner.CornerRadius = UDim.new(1, 0)
 	starCorner.Parent = star
 
+	local speed = math.random(4, 10) / 10000
 	task.spawn(function()
-		task.wait(math.random(0, 200) / 100)
+		local x, y = startX, startY
 		while dim.Parent do
-			local dur = math.random(15, 35) / 10
-			TweenService:Create(star, TweenInfo.new(dur, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 0.9}):Play()
-			task.wait(dur)
-			TweenService:Create(star, TweenInfo.new(dur, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = math.random(0, 30) / 100}):Play()
-			task.wait(dur)
+			x = x + speed
+			y = y + speed
+			if x > 1.05 or y > 1.05 then
+				x = -0.05
+				y = math.random(-1000, 1000) / 1000
+			end
+			star.Position = UDim2.new(x, 0, y, 0)
+			task.wait(0.03)
 		end
 	end)
 end
@@ -1285,9 +1286,6 @@ badgeText.TextSize = 11
 badgeText.ZIndex = 13
 badgeText.Parent = badge
 
--- =====================================================
--- Vektör ikon çizim yardımcıları (görsel/asset id gerektirmez)
--- =====================================================
 local function drawPhoneIcon(parent)
 	local holder = Instance.new("Frame")
 	holder.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -1391,7 +1389,6 @@ local function drawPcTabletIcon(parent)
 	return holder
 end
 
--- Kart üretici fonksiyon
 local function createCard(xPos, title)
 	local card = Instance.new(title == "MOBILE" and "TextButton" or "Frame")
 	card.Size = UDim2.new(0.42, 0, 0.5, 0)
@@ -1419,15 +1416,23 @@ local function createCard(xPos, title)
 	cardStroke.Parent = card
 
 	local cardTitle = Instance.new("TextLabel")
-	cardTitle.Size = UDim2.new(1, 0, 0, 20)
-	cardTitle.Position = UDim2.new(0, 0, 0.06, 0)
+	cardTitle.Size = UDim2.new(1, -12, 0, 20)
+	cardTitle.Position = UDim2.new(0, 6, 0.06, 0)
 	cardTitle.BackgroundTransparency = 1
 	cardTitle.Text = title
 	cardTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
 	cardTitle.Font = Enum.Font.GothamBlack
 	cardTitle.TextSize = 14
+	cardTitle.TextScaled = false
+	cardTitle.TextWrapped = false
 	cardTitle.ZIndex = 13
 	cardTitle.Parent = card
+
+	local titleConstraint = Instance.new("UITextSizeConstraint")
+	titleConstraint.MaxTextSize = 14
+	titleConstraint.MinTextSize = 9
+	titleConstraint.Parent = cardTitle
+	cardTitle.TextScaled = true
 
 	return card
 end
@@ -1438,7 +1443,6 @@ local pcCard = createCard(0.72, "PC & TABLET")
 drawPhoneIcon(mobileCard)
 drawPcTabletIcon(pcCard)
 
--- Hover efekti (sadece mobil, seçilebilir olduğu belli olsun)
 mobileCard.MouseEnter:Connect(function()
 	TweenService:Create(mobileCard, TweenInfo.new(0.2), {BackgroundTransparency = 0.85}):Play()
 	TweenService:Create(mobileCard.CardStroke, TweenInfo.new(0.2), {Transparency = 0.2, Color = Color3.fromRGB(90, 170, 255)}):Play()
@@ -1448,9 +1452,6 @@ mobileCard.MouseLeave:Connect(function()
 	TweenService:Create(mobileCard.CardStroke, TweenInfo.new(0.2), {Transparency = 0.75, Color = Color3.fromRGB(255, 255, 255)}):Play()
 end)
 
--- "COMING SOON" çapraz şerit (PC & Tablet kartının üstünde)
--- Açı ve uzunluk kartın gerçek piksel boyutuna göre hesaplanıyor,
--- böylece her cihazda tam sağ üst köşeden sol alt köşeye gider, yamuk durmaz.
 local ribbon = Instance.new("Frame")
 ribbon.AnchorPoint = Vector2.new(0.5, 0.5)
 ribbon.Size = UDim2.new(0, 200, 0, 22)
@@ -1460,6 +1461,10 @@ ribbon.BackgroundTransparency = 0.05
 ribbon.BorderSizePixel = 0
 ribbon.ZIndex = 15
 ribbon.Parent = pcCard
+
+local ribbonCorner = Instance.new("UICorner")
+ribbonCorner.CornerRadius = UDim.new(1, 0)
+ribbonCorner.Parent = ribbon
 
 local ribbonText = Instance.new("TextLabel")
 ribbonText.Size = UDim2.new(1, 0, 1, 0)
@@ -1477,19 +1482,15 @@ local function fitRibbonToCard()
 		local angle = -math.deg(math.atan(h / w))
 		local diagonal = math.sqrt(w * w + h * h)
 		ribbon.Rotation = angle
-		ribbon.Size = UDim2.new(0, diagonal * 0.86, 0, ribbon.Size.Y.Offset)
+		ribbon.Size = UDim2.new(0, diagonal * 0.88, 0, ribbon.Size.Y.Offset)
 	end
 end
 
 fitRibbonToCard()
 pcCard:GetPropertyChangedSignal("AbsoluteSize"):Connect(fitRibbonToCard)
 
--- Şerit kutunun dışına asla taşmasın
 pcCard.ClipsDescendants = true
 
--- =====================================================
--- 3. GEÇİŞ ANİMASYONU (Mobil seçilince ekran yavaşça silinir)
--- =====================================================
 local function fadeOutAndDestroy(duration)
 	local tweens = {}
 	local tInfo = TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
@@ -1523,9 +1524,6 @@ local function fadeOutAndDestroy(duration)
 	panel:Destroy()
 end
 
--- =====================================================
--- 4. BİLDİRİM ÇUBUĞU (Sağ alt, 15 saniyelik ilerleme çubuklu)
--- =====================================================
 local function showActiveNotification()
 	local notif = Instance.new("Frame")
 	notif.Name = "NotifyBar"
@@ -1641,9 +1639,6 @@ local function showActiveNotification()
 	notif:Destroy()
 end
 
--- =====================================================
--- 5. CİHAZ SEÇİMİ (Next yok, direkt tıklayınca aktifleşir)
--- =====================================================
 mobileCard.MouseButton1Click:Connect(function()
 	mobileCard.Active = false
 
@@ -1654,9 +1649,6 @@ mobileCard.MouseButton1Click:Connect(function()
 	end)
 end)
 
--- =====================================================
--- 6. YARDIMCI FONKSİYONLAR
--- =====================================================
 local function round(val, decimal)
 	local mult = 10^(decimal or 0)
 	return math.floor(val * mult + 0.5) / mult
@@ -1701,9 +1693,6 @@ local function getOrCreateHeaderTotal(gui, headerText)
 	return nil, nil
 end
 
--- =====================================================
--- 7. ANA HESAPLAMA DÖNGÜSÜ
--- =====================================================
 task.spawn(function()
 	while screenGui.Parent do
 		task.wait(0.3)
